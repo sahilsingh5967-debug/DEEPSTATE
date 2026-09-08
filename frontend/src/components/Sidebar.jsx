@@ -1,13 +1,13 @@
 import React from 'react';
-import { LayoutDashboard, Radio, Network, ShieldAlert, Cpu, FileText, Settings } from 'lucide-react';
+import { LayoutDashboard, Radio, Network, ShieldAlert, Cpu, Layers } from 'lucide-react';
 
 const NAV_ITEMS = [
-  { id: 'overview', label: 'Architecture Overview', icon: LayoutDashboard, phase: 'Phase 1 Active', active: true },
-  { id: 'testbed', label: 'IPsec Testbed', icon: Radio, phase: 'Phase 2 Planned', active: false },
-  { id: 'pcap', label: 'PCAP Analyzer', icon: Network, phase: 'Phase 3 Planned', active: false },
-  { id: 'security', label: 'Security Assessment', icon: ShieldAlert, phase: 'Phase 4 Planned', active: false },
-  { id: 'ml', label: 'ML Classification', icon: Cpu, phase: 'Phase 5 Planned', active: false },
-  { id: 'reports', label: 'Reports & Dashboard', icon: FileText, phase: 'Phase 7 Planned', active: false },
+  { id: 'overview', label: 'SOC Dashboard', icon: LayoutDashboard, phase: 'Phase 6+7 Active', active: true },
+  { id: 'pcap', label: 'PCAP Analyzer', icon: Network, phase: 'Phase 3 Integrated', active: false },
+  { id: 'security', label: 'Security Engine', icon: ShieldAlert, phase: 'Phase 4 Integrated', active: false },
+  { id: 'ml', label: 'ML Traffic Classifier', icon: Cpu, phase: 'Phase 5 Integrated', active: false },
+  { id: 'testbed', label: 'IPsec Testbed', icon: Radio, phase: 'Phase 2 Integrated', active: false },
+  { id: 'integration', label: 'System Pipeline', icon: Layers, phase: 'Phase 1 Ready', active: false },
 ];
 
 export default function Sidebar() {
@@ -22,7 +22,7 @@ export default function Sidebar() {
       gap: '8px'
     }}>
       <div style={{ padding: '0 12px 12px', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.05em' }}>
-        System Modules
+        DEEPSTATE Modules
       </div>
       {NAV_ITEMS.map((item) => {
         const Icon = item.icon;

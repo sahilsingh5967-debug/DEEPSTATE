@@ -4,7 +4,7 @@ import Sidebar from './components/Sidebar';
 import PcapSelector from './components/PcapSelector';
 import UnifiedResults from './components/UnifiedResults';
 import { fetchBackendHealth, analyzePcap } from './api/client';
-import { ShieldCheck, AlertTriangle } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 export default function App() {
   const [health, setHealth] = useState(null);
@@ -38,9 +38,17 @@ export default function App() {
     }
   };
 
+  const pipelineStatus = analyzing
+    ? 'analyzing'
+    : apiError
+    ? 'failed'
+    : analysisResult
+    ? 'completed'
+    : 'idle';
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#090d16', color: '#f8fafc' }}>
-      <Header backendHealth={health} loading={loadingHealth} />
+      <Header backendHealth={health} loading={loadingHealth} pipelineStatus={pipelineStatus} />
 
       <div style={{ display: 'flex', flex: 1 }}>
         <Sidebar />
@@ -48,10 +56,10 @@ export default function App() {
         <main style={{ flex: 1, padding: '28px', display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1400px' }}>
           <div>
             <h2 style={{ margin: '0 0 6px', fontSize: '22px', fontWeight: '700', color: '#f8fafc' }}>
-              Phase 6 — Unified IPsec Protocol & Security Dashboard
+              DEEPSTATE — IPsec Security Intelligence Center
             </h2>
             <p style={{ margin: 0, fontSize: '14px', color: '#94a3b8' }}>
-              End-to-End PCAP Analysis Workflow integrating Deterministic Protocol Parsing (Phase 3), Security Assessment Scoring (Phase 4), and ML Traffic Classification Inference (Phase 5).
+              Unified PCAP Ingestion & Analysis Workflow integrating Deterministic Protocol Parsing (Phase 3), Security Policy Scoring (Phase 4), and Encrypted Traffic ML Inference (Phase 5).
             </p>
           </div>
 
@@ -70,7 +78,7 @@ export default function App() {
             }}>
               <AlertTriangle style={{ width: '20px', height: '20px', flexShrink: 0 }} />
               <div>
-                <strong>Analysis Failed:</strong> {apiError}
+                <strong>Analysis Pipeline Failure:</strong> {apiError}
               </div>
             </div>
           )}

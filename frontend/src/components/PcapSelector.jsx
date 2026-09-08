@@ -45,7 +45,7 @@ export default function PcapSelector({ onAnalyze, analyzing }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <HardDrive style={{ width: '20px', height: '20px', color: '#38bdf8' }} />
           <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '600', color: '#f1f5f9' }}>
-            PCAP Traffic Capture Selection
+            DEEPSTATE PCAP Ingestion & Analysis Control
           </h3>
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>

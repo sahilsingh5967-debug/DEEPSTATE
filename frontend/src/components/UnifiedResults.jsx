@@ -10,8 +10,11 @@ import {
   HelpCircle,
   Info,
   Layers,
-  FileCheck
+  FileCheck,
+  ShieldAlert,
+  Radio
 } from 'lucide-react';
+import StatusCard from './StatusCard';
 
 export default function UnifiedResults({ result }) {
   if (!result) return null;
@@ -66,10 +69,10 @@ export default function UnifiedResults({ result }) {
           </div>
           <div>
             <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '700', color: '#f8fafc' }}>
-              Unified Analysis Report
+              DEEPSTATE Threat & Traffic Intelligence Report
             </h3>
             <span style={{ fontSize: '12px', color: '#94a3b8', fontFamily: 'monospace' }}>
-              ID: {analysis_id}
+              Analysis Session ID: {analysis_id}
             </span>
           </div>
         </div>
@@ -80,6 +83,38 @@ export default function UnifiedResults({ result }) {
           <div>Duration: <strong style={{ color: '#f8fafc' }}>{pcap_metadata?.duration_seconds ? `${pcap_metadata.duration_seconds}s` : 'N/A'}</strong></div>
           <div>Size: <strong style={{ color: '#f8fafc' }}>{pcap_metadata?.file_size_bytes ? `${pcap_metadata.file_size_bytes} B` : 'N/A'}</strong></div>
         </div>
+      </div>
+
+      {/* 4-KPI SOC Executive Summary Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+        <StatusCard
+          title="Security Risk Score"
+          status={security_assessment ? `${security_assessment.security_score.toFixed(1)} / 100` : 'N/A'}
+          badge={security_assessment?.risk_level || 'Active'}
+          description={`Overall Posture: ${security_assessment?.overall_status || 'Evaluated'}`}
+          icon={ShieldAlert}
+        />
+        <StatusCard
+          title="IKE Negotiation"
+          status={ike?.detected ? `Detected (${ike.version || 'IKE'})` : 'None Observed'}
+          badge="Observed Fact"
+          description={ike?.detected ? `${ike.exchange_types?.length || 0} exchange type(s) identified` : 'No IKE handshakes found'}
+          icon={Lock}
+        />
+        <StatusCard
+          title="ESP Encapsulation"
+          status={esp?.detected ? `${esp.encapsulation || 'ESP Payload'}` : 'None Observed'}
+          badge="Observed Fact"
+          description={esp?.detected ? `${esp.packet_count} packets processed` : 'No ESP frames present'}
+          icon={Activity}
+        />
+        <StatusCard
+          title="ML Traffic Class"
+          status={traffic_classification ? `${traffic_classification.dominant_class} (${((traffic_classification.confidence || 0) * 100).toFixed(0)}%)` : 'N/A'}
+          badge="ML Inference"
+          description="Probabilistic inference from encrypted flow statistics"
+          icon={Cpu}
+        />
       </div>
 
       {errors && errors.length > 0 && (
@@ -119,7 +154,7 @@ export default function UnifiedResults({ result }) {
             textTransform: 'uppercase',
             letterSpacing: '0.5px'
           }}>
-            Observed Protocol Facts
+            OBSERVED / DETERMINISTIC FACTS
           </span>
         </div>
 
@@ -211,17 +246,32 @@ export default function UnifiedResults({ result }) {
                 Tier B: Security Assessment Engine (Phase 4)
               </h4>
             </div>
-            <span style={{
-              fontSize: '12px',
-              fontWeight: '700',
-              padding: '4px 12px',
-              borderRadius: '12px',
-              backgroundColor: `${getRiskColor(security_assessment.risk_level)}20`,
-              border: `1px solid ${getRiskColor(security_assessment.risk_level)}40`,
-              color: getRiskColor(security_assessment.risk_level)
-            }}>
-              {security_assessment.overall_status} (Risk: {security_assessment.risk_level})
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{
+                fontSize: '11px',
+                fontWeight: '700',
+                padding: '4px 10px',
+                borderRadius: '12px',
+                backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                border: '1px solid rgba(34, 197, 94, 0.3)',
+                color: '#4ade80',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                POLICY-BASED SECURITY ASSESSMENT
+              </span>
+              <span style={{
+                fontSize: '12px',
+                fontWeight: '700',
+                padding: '4px 12px',
+                borderRadius: '12px',
+                backgroundColor: `${getRiskColor(security_assessment.risk_level)}20`,
+                border: `1px solid ${getRiskColor(security_assessment.risk_level)}40`,
+                color: getRiskColor(security_assessment.risk_level)
+              }}>
+                {security_assessment.overall_status} (Risk: {security_assessment.risk_level})
+              </span>
+            </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
