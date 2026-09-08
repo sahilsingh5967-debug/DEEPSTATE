@@ -1,0 +1,344 @@
+{
+  "evaluation_timestamp": "2026-09-08T18:24:54.273782",
+  "selected_model": "Random Forest",
+  "model_selection_criterion": "Validation Macro-F1",
+  "random_seed": 42,
+  "candidate_comparison": {
+    "Dummy Baseline": {
+      "validation_accuracy": 0.2167,
+      "validation_macro_precision": 0.0271,
+      "validation_macro_recall": 0.125,
+      "validation_macro_f1": 0.0445,
+      "validation_weighted_f1": 0.0772
+    },
+    "Logistic Regression": {
+      "validation_accuracy": 0.8342,
+      "validation_macro_precision": 0.7797,
+      "validation_macro_recall": 0.7806,
+      "validation_macro_f1": 0.7651,
+      "validation_weighted_f1": 0.8217
+    },
+    "Random Forest": {
+      "validation_accuracy": 0.8453,
+      "validation_macro_precision": 0.7976,
+      "validation_macro_recall": 0.7976,
+      "validation_macro_f1": 0.7975,
+      "validation_weighted_f1": 0.8452
+    }
+  },
+  "validation_metrics": {
+    "accuracy": 0.8453,
+    "macro_precision": 0.7976,
+    "macro_recall": 0.7976,
+    "macro_f1": 0.7975,
+    "weighted_precision": 0.8453,
+    "weighted_recall": 0.8453,
+    "weighted_f1": 0.8452,
+    "per_class_metrics": {
+      "ICMP": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "support": 148
+      },
+      "Web Browsing": {
+        "precision": 0.4615,
+        "recall": 0.4932,
+        "f1_score": 0.4768,
+        "support": 146
+      },
+      "Email": {
+        "precision": 0.4966,
+        "recall": 0.4805,
+        "f1_score": 0.4884,
+        "support": 154
+      },
+      "Chat": {
+        "precision": 0.4222,
+        "recall": 0.4071,
+        "f1_score": 0.4145,
+        "support": 140
+      },
+      "Streaming": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "support": 332
+      },
+      "File Transfer": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "support": 167
+      },
+      "VoIP": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "support": 310
+      },
+      "P2P": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "support": 135
+      }
+    },
+    "confusion_matrix": [
+      [
+        148,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        72,
+        38,
+        36,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        38,
+        74,
+        42,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        46,
+        37,
+        57,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        332,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        167,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        310,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        135
+      ]
+    ],
+    "target_classes": [
+      "ICMP",
+      "Web Browsing",
+      "Email",
+      "Chat",
+      "Streaming",
+      "File Transfer",
+      "VoIP",
+      "P2P"
+    ]
+  },
+  "final_test_metrics": {
+    "accuracy": 0.8535,
+    "macro_precision": 0.8196,
+    "macro_recall": 0.8143,
+    "macro_f1": 0.8147,
+    "weighted_precision": 0.8575,
+    "weighted_recall": 0.8535,
+    "weighted_f1": 0.8538,
+    "per_class_metrics": {
+      "ICMP": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "support": 139
+      },
+      "Web Browsing": {
+        "precision": 0.4346,
+        "recall": 0.5608,
+        "f1_score": 0.4897,
+        "support": 148
+      },
+      "Email": {
+        "precision": 0.5355,
+        "recall": 0.5061,
+        "f1_score": 0.5204,
+        "support": 164
+      },
+      "Chat": {
+        "precision": 0.5872,
+        "recall": 0.4476,
+        "f1_score": 0.5079,
+        "support": 143
+      },
+      "Streaming": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "support": 343
+      },
+      "File Transfer": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "support": 154
+      },
+      "VoIP": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "support": 308
+      },
+      "P2P": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "support": 137
+      }
+    },
+    "confusion_matrix": [
+      [
+        139,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        83,
+        41,
+        24,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        60,
+        83,
+        21,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        48,
+        31,
+        64,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        343,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        154,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        308,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        137
+      ]
+    ],
+    "target_classes": [
+      "ICMP",
+      "Web Browsing",
+      "Email",
+      "Chat",
+      "Streaming",
+      "File Transfer",
+      "VoIP",
+      "P2P"
+    ]
+  },
+  "flow_counts": {
+    "total_clean_flows": 10220,
+    "train_flows": 7152,
+    "val_flows": 1532,
+    "test_flows": 1536
+  },
+  "leakage_checks": {
+    "forbidden_predictive_columns_purged": true,
+    "zero_flow_id_overlap": true,
+    "scaler_fitted_on_train_only": true,
+    "real_ipsec_ground_truth_excluded": true,
+    "synthetic_fixtures_excluded": true
+  }
+}

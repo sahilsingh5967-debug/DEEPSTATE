@@ -1,0 +1,33 @@
+{
+  "model_name": "Random Forest",
+  "feature_importances": {
+    "pkt_len_mean": 0.079085,
+    "pkt_len_max": 0.075265,
+    "fwd_pkt_len_mean": 0.072637,
+    "pkt_len_min": 0.070852,
+    "total_bwd_bytes": 0.061992,
+    "bwd_pkt_len_mean": 0.061676,
+    "bytes_per_second": 0.061668,
+    "total_fwd_bytes": 0.061421,
+    "total_bytes": 0.060454,
+    "packets_per_second": 0.052814,
+    "flow_iat_std": 0.050452,
+    "bwd_iat_mean": 0.045401,
+    "pkt_len_std": 0.043673,
+    "flow_iat_max": 0.041501,
+    "flow_iat_mean": 0.035508,
+    "fwd_iat_mean": 0.026444,
+    "total_packets": 0.024425,
+    "total_bwd_packets": 0.018938,
+    "total_fwd_packets": 0.017267,
+    "flow_duration_seconds": 0.013144,
+    "flow_iat_min": 0.00713,
+    "pkt_len_skewness": 0.006921,
+    "fwd_bwd_byte_ratio": 0.006008,
+    "fwd_bwd_packet_ratio": 0.005327,
+    "esp_packet_count": 0.0,
+    "has_ike": 0.0,
+    "has_esp": 0.0,
+    "has_udp_4500": 0.0
+  }
+}

@@ -1,0 +1,57 @@
+# Research & Laboratory IPsec VPN Testbed Topology
+# Connects Peer A (192.168.100.2) and Peer B (192.168.100.3) over an isolated bridge network.
+# Requires Linux kernel XFRM/NETKEY and NET_ADMIN / NET_RAW privileges.
+
+services:
+  peer-a:
+    image: debian:bookworm-slim
+    container_name: ipsec-peer-a
+    hostname: peer-a
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./peer_a_swanctl.conf:/etc/swanctl/swanctl.conf:ro
+      - ../../data/pcaps/real:/captures
+    networks:
+      ipsec-net:
+        ipv4_address: 192.168.100.2
+    command: >
+      bash -c "
+        apt-get update && apt-get install -y strongswan strongswan-swanctl iproute2 iputils-ping tcpdump netcat-openbsd procps &&
+        ip addr add 10.1.0.1/24 dev lo 2>/dev/null || true &&
+        ipsec start &&
+        sleep 2 &&
+        swanctl --load-all &&
+        tail -f /dev/null
+      "
+
+  peer-b:
+    image: debian:bookworm-slim
+    container_name: ipsec-peer-b
+    hostname: peer-b
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./peer_b_swanctl.conf:/etc/swanctl/swanctl.conf:ro
+      - ../../data/pcaps/real:/captures
+    networks:
+      ipsec-net:
+        ipv4_address: 192.168.100.3
+    command: >
+      bash -c "
+        apt-get update && apt-get install -y strongswan strongswan-swanctl iproute2 iputils-ping tcpdump netcat-openbsd procps &&
+        ip addr add 10.2.0.1/24 dev lo 2>/dev/null || true &&
+        ipsec start &&
+        sleep 2 &&
+        swanctl --load-all &&
+        tail -f /dev/null
+      "
+
+networks:
+  ipsec-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24

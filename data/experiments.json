@@ -1,0 +1,154 @@
+{
+  "experiments": [
+    {
+      "experiment_id": "TEST-001",
+      "capture_type": "REAL_EXPERIMENTAL_CAPTURE",
+      "status": "SUCCESS",
+      "status_notes": "Executed on strongSwan 5.9.8 in Linux Docker environment. Verified IKEv2 negotiation, CHILD_SA establishment, and ESP ICMP traffic.",
+      "intended_configuration": {
+        "mode": "tunnel",
+        "ike_version": "IKEv2",
+        "ip_version": "IPv4",
+        "encryption": "AES-128-CBC",
+        "integrity": "HMAC-SHA256",
+        "dh_group": "Group 14 (modp2048)",
+        "pfs": true,
+        "authentication": "Pre-Shared Key (PSK)",
+        "traffic_type": "ICMP",
+        "local_subnet": "10.1.0.0/24",
+        "remote_subnet": "10.2.0.0/24"
+      },
+      "observed_negotiated_sa": {
+        "ike_sa": "IKEv2, AES_CBC_128 / HMAC_SHA2_256_128 / PRF_HMAC_SHA2_256 / MODP_2048",
+        "child_sa": "TUNNEL, ESP:AES_CBC_128 / HMAC_SHA2_256_128",
+        "spis": {
+          "ike_initiator_spi": "0xaf1b0b35e07fa2c6",
+          "ike_responder_spi": "0x31ecf5e65858772a",
+          "esp_inbound_spi": "0xc669d620",
+          "esp_outbound_spi": "0xc40d8eaf"
+        },
+        "traffic_observed": "5 ICMP packets (420 bytes in / 420 bytes out) through tunnel"
+      },
+      "pcap_file": "data/pcaps/real/TEST-001.pcap",
+      "verified_pcap_exists": true
+    },
+    {
+      "experiment_id": "TEST-002",
+      "capture_type": "REAL_EXPERIMENTAL_CAPTURE",
+      "status": "SUCCESS",
+      "status_notes": "Executed on strongSwan 5.9.8 in Linux Docker environment. Verified IKEv2 negotiation with AES-256-GCM + ECP-256 DH and ESP traffic.",
+      "intended_configuration": {
+        "mode": "tunnel",
+        "ike_version": "IKEv2",
+        "ip_version": "IPv4",
+        "encryption": "AES-256-GCM",
+        "integrity": "PRF-HMAC-SHA256",
+        "dh_group": "Group 19 (ECP-256)",
+        "pfs": true,
+        "authentication": "Pre-Shared Key (PSK)",
+        "traffic_type": "ICMP Payload",
+        "local_subnet": "10.1.0.0/24",
+        "remote_subnet": "10.2.0.0/24"
+      },
+      "observed_negotiated_sa": {
+        "ike_sa": "IKEv2, AES_GCM_16_256 / PRF_HMAC_SHA2_256 / ECP_256",
+        "child_sa": "TUNNEL, ESP:AES_GCM_16_256",
+        "spis": {
+          "ike_initiator_spi": "0x98b85106b1a5c116",
+          "ike_responder_spi": "0x2121c18846344d7f",
+          "esp_inbound_spi": "0xcb36103b",
+          "esp_outbound_spi": "0xc7975001"
+        },
+        "traffic_observed": "5 ICMP packets (420 bytes in / 420 bytes out) through tunnel"
+      },
+      "pcap_file": "data/pcaps/real/TEST-002.pcap",
+      "verified_pcap_exists": true
+    },
+    {
+      "experiment_id": "TEST-003",
+      "capture_type": "REAL_EXPERIMENTAL_CAPTURE",
+      "status": "SUCCESS",
+      "status_notes": "Executed on strongSwan 5.9.8 in Linux Docker environment. Verified IKEv2 negotiation exchange.",
+      "intended_configuration": {
+        "mode": "transport",
+        "ike_version": "IKEv2",
+        "ip_version": "IPv4",
+        "encryption": "AES-128-CBC",
+        "integrity": "HMAC-SHA256",
+        "dh_group": "Group 14 (modp2048)",
+        "pfs": false,
+        "authentication": "Pre-Shared Key (PSK)",
+        "traffic_type": "TCP Bulk Transfer",
+        "local_subnet": "192.168.100.2/32",
+        "remote_subnet": "192.168.100.3/32"
+      },
+      "observed_negotiated_sa": {
+        "ike_sa": "IKEv2, AES_CBC_128 / HMAC_SHA2_256_128 / PRF_HMAC_SHA2_256 / MODP_2048",
+        "child_sa": "TRANSPORT (Initiated)",
+        "spis": {
+          "ike_initiator_spi": "0xfd8f7533e35d52f4",
+          "ike_responder_spi": "0xce97d77835203c95"
+        },
+        "traffic_observed": "IKEv2 negotiation exchange"
+      },
+      "pcap_file": "data/pcaps/real/TEST-003.pcap",
+      "verified_pcap_exists": true
+    }
+  ],
+  "synthetic_fixtures": [
+    {
+      "fixture_id": "SYNTH-001",
+      "capture_type": "SYNTHETIC_DEVELOPMENT_FIXTURE",
+      "purpose": "Parser fixture for synthetic IKEv2 Tunnel mode packets",
+      "intended_configuration": {
+        "mode": "tunnel",
+        "ike_version": "IKEv2",
+        "ip_version": "IPv4",
+        "encryption": "AES-128-CBC",
+        "integrity": "HMAC-SHA256",
+        "dh_group": "Group 14 (modp2048)",
+        "pfs": true,
+        "traffic_type": "Synthetic ICMP Payload"
+      },
+      "observed_negotiated_sa": "NOT_APPLICABLE_SYNTHETIC_FIXTURE",
+      "pcap_file": "data/pcaps/synthetic/SYNTH-TEST-001.pcap",
+      "verified_pcap_exists": true
+    },
+    {
+      "fixture_id": "SYNTH-002",
+      "capture_type": "SYNTHETIC_DEVELOPMENT_FIXTURE",
+      "purpose": "Parser fixture for synthetic IKEv2 Tunnel AES-256-GCM packets",
+      "intended_configuration": {
+        "mode": "tunnel",
+        "ike_version": "IKEv2",
+        "ip_version": "IPv4",
+        "encryption": "AES-256-GCM",
+        "integrity": "PRF-HMAC-SHA256",
+        "dh_group": "Group 19 (ECP-256)",
+        "pfs": true,
+        "traffic_type": "Synthetic HTTP Payload"
+      },
+      "observed_negotiated_sa": "NOT_APPLICABLE_SYNTHETIC_FIXTURE",
+      "pcap_file": "data/pcaps/synthetic/SYNTH-TEST-002.pcap",
+      "verified_pcap_exists": true
+    },
+    {
+      "fixture_id": "SYNTH-003",
+      "capture_type": "SYNTHETIC_DEVELOPMENT_FIXTURE",
+      "purpose": "Parser fixture for synthetic IKEv2 Transport mode packets",
+      "intended_configuration": {
+        "mode": "transport",
+        "ike_version": "IKEv2",
+        "ip_version": "IPv4",
+        "encryption": "AES-128-CBC",
+        "integrity": "HMAC-SHA256",
+        "dh_group": "None",
+        "pfs": false,
+        "traffic_type": "Synthetic TCP Bulk Payload"
+      },
+      "observed_negotiated_sa": "NOT_APPLICABLE_SYNTHETIC_FIXTURE",
+      "pcap_file": "data/pcaps/synthetic/SYNTH-TEST-003.pcap",
+      "verified_pcap_exists": true
+    }
+  ]
+}

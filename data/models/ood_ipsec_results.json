@@ -1,0 +1,396 @@
+{
+  "evaluation_type": "INDEPENDENT_REAL_IPSEC_OUT_OF_DISTRIBUTION_INFERENCE",
+  "timestamp": "2026-09-08T18:36:56.239232",
+  "ood_disclaimer": "The IPsec captures are an independent out-of-distribution evaluation set. Their ML predictions are model inferences based on encrypted flow statistics and are not treated as ground-truth application labels.",
+  "metrics": {
+    "total_flows_evaluated": 11,
+    "ground_truth_matching_flows": 4,
+    "ood_flow_accuracy": 0.3636,
+    "confidence_stats": {
+      "min_confidence": 0.44,
+      "max_confidence": 0.98,
+      "mean_confidence": 0.7109
+    }
+  },
+  "domain_shift_audit": "Public ISCX-VPN2016 dataset contains OpenVPN/SSL-VPN traffic, whereas testbed captures are native IPsec (ESP/IKEv2). Domain shift arises from ESP encapsulation overhead (+50-70 bytes), fixed ESP sequence numbers/SPIs, and 1.0s ping intervals matching low-bitrate VoIP audio frame feature statistics (e.g. G.729/AMR). ML predictions are statistical inferences and must never override deterministic protocol parsing facts.",
+  "results": [
+    {
+      "pcap_file": "TEST-001.pcap",
+      "pcap_path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/pcaps/real/TEST-001.pcap",
+      "status": "COMPLETED",
+      "flows_count": 4,
+      "dominant_inferred_class": "ICMP",
+      "class_distribution_across_flows": {
+        "ICMP": 2,
+        "VoIP": 2
+      },
+      "flow_inferences": [
+        {
+          "inferred_ml_classification": {
+            "predicted_class": "ICMP",
+            "confidence": 0.44,
+            "class_probabilities": {
+              "ICMP": 0.44,
+              "Web Browsing": 0.01,
+              "Email": 0.2,
+              "Chat": 0.08,
+              "Streaming": 0.0,
+              "File Transfer": 0.19,
+              "VoIP": 0.02,
+              "P2P": 0.06
+            },
+            "evidence": {
+              "flow_duration_seconds": 0.002632,
+              "total_packets": 2,
+              "total_bytes": 1020,
+              "pkt_len_mean": 510.0,
+              "packets_per_second": 759.8377,
+              "bytes_per_second": 387517.2174,
+              "model_used": "Random Forest"
+            },
+            "status": "INFERRED",
+            "disclaimer": "This classification is an ML model inference based on encrypted flow statistics and is NOT an observed protocol fact."
+          },
+          "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+          "packets_count": 2
+        },
+        {
+          "inferred_ml_classification": {
+            "predicted_class": "ICMP",
+            "confidence": 0.61,
+            "class_probabilities": {
+              "ICMP": 0.61,
+              "Web Browsing": 0.01,
+              "Email": 0.15,
+              "Chat": 0.09,
+              "Streaming": 0.0,
+              "File Transfer": 0.06,
+              "VoIP": 0.04,
+              "P2P": 0.04
+            },
+            "evidence": {
+              "flow_duration_seconds": 0.004287,
+              "total_packets": 2,
+              "total_bytes": 636,
+              "pkt_len_mean": 318.0,
+              "packets_per_second": 466.5262,
+              "bytes_per_second": 148355.3386,
+              "model_used": "Random Forest"
+            },
+            "status": "INFERRED",
+            "disclaimer": "This classification is an ML model inference based on encrypted flow statistics and is NOT an observed protocol fact."
+          },
+          "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+          "packets_count": 2
+        },
+        {
+          "inferred_ml_classification": {
+            "predicted_class": "VoIP",
+            "confidence": 0.98,
+            "class_probabilities": {
+              "ICMP": 0.02,
+              "Web Browsing": 0.0,
+              "Email": 0.0,
+              "Chat": 0.0,
+              "Streaming": 0.0,
+              "File Transfer": 0.0,
+              "VoIP": 0.98,
+              "P2P": 0.0
+            },
+            "evidence": {
+              "flow_duration_seconds": 4.070253,
+              "total_packets": 10,
+              "total_bytes": 1700,
+              "pkt_len_mean": 170.0,
+              "packets_per_second": 2.4568,
+              "bytes_per_second": 417.6645,
+              "model_used": "Random Forest"
+            },
+            "status": "INFERRED",
+            "disclaimer": "This classification is an ML model inference based on encrypted flow statistics and is NOT an observed protocol fact."
+          },
+          "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+          "packets_count": 10
+        },
+        {
+          "inferred_ml_classification": {
+            "predicted_class": "VoIP",
+            "confidence": 0.65,
+            "class_probabilities": {
+              "ICMP": 0.35,
+              "Web Browsing": 0.0,
+              "Email": 0.0,
+              "Chat": 0.0,
+              "Streaming": 0.0,
+              "File Transfer": 0.0,
+              "VoIP": 0.65,
+              "P2P": 0.0
+            },
+            "evidence": {
+              "flow_duration_seconds": 4.068933,
+              "total_packets": 5,
+              "total_bytes": 490,
+              "pkt_len_mean": 98.0,
+              "packets_per_second": 1.2288,
+              "bytes_per_second": 120.4247,
+              "model_used": "Random Forest"
+            },
+            "status": "INFERRED",
+            "disclaimer": "This classification is an ML model inference based on encrypted flow statistics and is NOT an observed protocol fact."
+          },
+          "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+          "packets_count": 5
+        }
+      ],
+      "ground_truth_protocol": "ICMP / IKEv2",
+      "ground_truth_description": "Real IKEv2/IPsec tunnel with ESP AES-128-CBC + HMAC-SHA256, carrying inner ICMP echo ping traffic to 8.8.8.8",
+      "expected_classes": [
+        "ICMP",
+        "VoIP"
+      ]
+    },
+    {
+      "pcap_file": "TEST-002.pcap",
+      "pcap_path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/pcaps/real/TEST-002.pcap",
+      "status": "COMPLETED",
+      "flows_count": 4,
+      "dominant_inferred_class": "ICMP",
+      "class_distribution_across_flows": {
+        "ICMP": 2,
+        "VoIP": 2
+      },
+      "flow_inferences": [
+        {
+          "inferred_ml_classification": {
+            "predicted_class": "ICMP",
+            "confidence": 0.75,
+            "class_probabilities": {
+              "ICMP": 0.75,
+              "Web Browsing": 0.01,
+              "Email": 0.09,
+              "Chat": 0.04,
+              "Streaming": 0.0,
+              "File Transfer": 0.06,
+              "VoIP": 0.03,
+              "P2P": 0.02
+            },
+            "evidence": {
+              "flow_duration_seconds": 0.003462,
+              "total_packets": 2,
+              "total_bytes": 620,
+              "pkt_len_mean": 310.0,
+              "packets_per_second": 577.688,
+              "bytes_per_second": 179083.2918,
+              "model_used": "Random Forest"
+            },
+            "status": "INFERRED",
+            "disclaimer": "This classification is an ML model inference based on encrypted flow statistics and is NOT an observed protocol fact."
+          },
+          "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+          "packets_count": 2
+        },
+        {
+          "inferred_ml_classification": {
+            "predicted_class": "ICMP",
+            "confidence": 0.74,
+            "class_probabilities": {
+              "ICMP": 0.74,
+              "Web Browsing": 0.01,
+              "Email": 0.09,
+              "Chat": 0.05,
+              "Streaming": 0.01,
+              "File Transfer": 0.06,
+              "VoIP": 0.03,
+              "P2P": 0.01
+            },
+            "evidence": {
+              "flow_duration_seconds": 0.008137,
+              "total_packets": 2,
+              "total_bytes": 587,
+              "pkt_len_mean": 293.5,
+              "packets_per_second": 245.7912,
+              "bytes_per_second": 72139.7184,
+              "model_used": "Random Forest"
+            },
+            "status": "INFERRED",
+            "disclaimer": "This classification is an ML model inference based on encrypted flow statistics and is NOT an observed protocol fact."
+          },
+          "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+          "packets_count": 2
+        },
+        {
+          "inferred_ml_classification": {
+            "predicted_class": "VoIP",
+            "confidence": 0.98,
+            "class_probabilities": {
+              "ICMP": 0.02,
+              "Web Browsing": 0.0,
+              "Email": 0.0,
+              "Chat": 0.0,
+              "Streaming": 0.0,
+              "File Transfer": 0.0,
+              "VoIP": 0.98,
+              "P2P": 0.0
+            },
+            "evidence": {
+              "flow_duration_seconds": 3.11018,
+              "total_packets": 8,
+              "total_bytes": 1232,
+              "pkt_len_mean": 154.0,
+              "packets_per_second": 2.5722,
+              "bytes_per_second": 396.1186,
+              "model_used": "Random Forest"
+            },
+            "status": "INFERRED",
+            "disclaimer": "This classification is an ML model inference based on encrypted flow statistics and is NOT an observed protocol fact."
+          },
+          "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+          "packets_count": 8
+        },
+        {
+          "inferred_ml_classification": {
+            "predicted_class": "VoIP",
+            "confidence": 0.65,
+            "class_probabilities": {
+              "ICMP": 0.35,
+              "Web Browsing": 0.0,
+              "Email": 0.0,
+              "Chat": 0.0,
+              "Streaming": 0.0,
+              "File Transfer": 0.0,
+              "VoIP": 0.65,
+              "P2P": 0.0
+            },
+            "evidence": {
+              "flow_duration_seconds": 3.109977,
+              "total_packets": 4,
+              "total_bytes": 392,
+              "pkt_len_mean": 98.0,
+              "packets_per_second": 1.2862,
+              "bytes_per_second": 126.0459,
+              "model_used": "Random Forest"
+            },
+            "status": "INFERRED",
+            "disclaimer": "This classification is an ML model inference based on encrypted flow statistics and is NOT an observed protocol fact."
+          },
+          "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+          "packets_count": 4
+        }
+      ],
+      "ground_truth_protocol": "File Transfer / NAT-T",
+      "ground_truth_description": "Real IKEv2/IPsec tunnel with NAT-Traversal (UDP 4500) carrying bulk data transfer / simulated file download (1420-byte ESP packets)",
+      "expected_classes": [
+        "File Transfer",
+        "Web Browsing",
+        "Streaming"
+      ]
+    },
+    {
+      "pcap_file": "TEST-003.pcap",
+      "pcap_path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/pcaps/real/TEST-003.pcap",
+      "status": "COMPLETED",
+      "flows_count": 3,
+      "dominant_inferred_class": "ICMP",
+      "class_distribution_across_flows": {
+        "ICMP": 2,
+        "VoIP": 1
+      },
+      "flow_inferences": [
+        {
+          "inferred_ml_classification": {
+            "predicted_class": "ICMP",
+            "confidence": 0.44,
+            "class_probabilities": {
+              "ICMP": 0.44,
+              "Web Browsing": 0.01,
+              "Email": 0.2,
+              "Chat": 0.08,
+              "Streaming": 0.0,
+              "File Transfer": 0.19,
+              "VoIP": 0.02,
+              "P2P": 0.06
+            },
+            "evidence": {
+              "flow_duration_seconds": 0.002694,
+              "total_packets": 2,
+              "total_bytes": 1020,
+              "pkt_len_mean": 510.0,
+              "packets_per_second": 742.4204,
+              "bytes_per_second": 378634.3995,
+              "model_used": "Random Forest"
+            },
+            "status": "INFERRED",
+            "disclaimer": "This classification is an ML model inference based on encrypted flow statistics and is NOT an observed protocol fact."
+          },
+          "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+          "packets_count": 2
+        },
+        {
+          "inferred_ml_classification": {
+            "predicted_class": "ICMP",
+            "confidence": 0.62,
+            "class_probabilities": {
+              "ICMP": 0.62,
+              "Web Browsing": 0.01,
+              "Email": 0.17,
+              "Chat": 0.1,
+              "Streaming": 0.0,
+              "File Transfer": 0.05,
+              "VoIP": 0.04,
+              "P2P": 0.01
+            },
+            "evidence": {
+              "flow_duration_seconds": 0.003692,
+              "total_packets": 2,
+              "total_bytes": 556,
+              "pkt_len_mean": 278.0,
+              "packets_per_second": 541.6898,
+              "bytes_per_second": 150589.76,
+              "model_used": "Random Forest"
+            },
+            "status": "INFERRED",
+            "disclaimer": "This classification is an ML model inference based on encrypted flow statistics and is NOT an observed protocol fact."
+          },
+          "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+          "packets_count": 2
+        },
+        {
+          "inferred_ml_classification": {
+            "predicted_class": "VoIP",
+            "confidence": 0.96,
+            "class_probabilities": {
+              "ICMP": 0.04,
+              "Web Browsing": 0.0,
+              "Email": 0.0,
+              "Chat": 0.0,
+              "Streaming": 0.0,
+              "File Transfer": 0.0,
+              "VoIP": 0.96,
+              "P2P": 0.0
+            },
+            "evidence": {
+              "flow_duration_seconds": 3.091075,
+              "total_packets": 8,
+              "total_bytes": 784,
+              "pkt_len_mean": 98.0,
+              "packets_per_second": 2.5881,
+              "bytes_per_second": 253.6334,
+              "model_used": "Random Forest"
+            },
+            "status": "INFERRED",
+            "disclaimer": "This classification is an ML model inference based on encrypted flow statistics and is NOT an observed protocol fact."
+          },
+          "flow_id": "1_192.168.100.2:0<->192.168.100.3:0",
+          "packets_count": 8
+        }
+      ],
+      "ground_truth_protocol": "Web Browsing / HTTP",
+      "ground_truth_description": "Real IPsec tunnel with NULL encryption / authentication-only carrying HTTP GET request and web server response",
+      "expected_classes": [
+        "Web Browsing",
+        "Chat",
+        "File Transfer"
+      ]
+    }
+  ]
+}
