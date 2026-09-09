@@ -5,9 +5,9 @@ export default function Header({ backendHealth, loading, activeTab, setActiveTab
   const backendOk = backendHealth?.status === 'ok' || backendHealth?.status === 'healthy';
 
   const navItems = [
-    { id: 'lab', label: 'Demonstration Lab', icon: FlaskConical },
-    { id: 'analyze', label: 'Analyze PCAP', icon: Play },
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'analyze', label: 'Analyze PCAP', icon: Play },
+    { id: 'lab', label: 'Demonstration Lab', icon: FlaskConical },
     { id: 'library', label: 'PCAP Library', icon: HardDrive },
   ];
 
@@ -72,7 +72,7 @@ export default function Header({ backendHealth, loading, activeTab, setActiveTab
                 cursor: 'pointer',
                 border: isActive ? '1px solid #D6A928' : 'none',
                 backgroundColor: isActive ? '#F4E7B8' : 'transparent',
-                color: isActive ? '#252525' : '#66645D',
+                color: isActive ? '#9A7618' : '#66645D',
                 transition: 'all 0.15s ease'
               }}
             >
@@ -92,7 +92,7 @@ export default function Header({ backendHealth, loading, activeTab, setActiveTab
           borderRadius: '16px',
           backgroundColor: backendOk ? '#E3EEE7' : '#F3E2E0',
           color: backendOk ? '#3F7654' : '#A94B43',
-          border: `1px solid ${backendOk ? '#BFD7C7' : '#E8C4C1'}`,
+          border: `1px solid ${backendOk ? '#C5DEC9' : '#E2B9B5'}`,
           display: 'flex',
           alignItems: 'center',
           gap: '6px',
@@ -115,7 +115,7 @@ export default function Header({ backendHealth, loading, activeTab, setActiveTab
           borderRadius: '16px',
           backgroundColor: '#F4E7B8',
           color: '#9A7618',
-          border: '1px solid #E3D08C',
+          border: '1px solid #E6D3A7',
           display: 'flex',
           alignItems: 'center',
           gap: '6px',

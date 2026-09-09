@@ -113,11 +113,11 @@ export default function App() {
           )}
 
           {activeTab === 'analyze' && (
-            <PcapSelector onAnalyze={handleAnalyze} analyzing={analyzing} />
+            <PcapSelector onAnalyze={handleAnalyze} analyzing={analyzing} viewMode="analyze" />
           )}
 
           {activeTab === 'library' && (
-            <PcapSelector onAnalyze={handleAnalyze} analyzing={analyzing} />
+            <PcapSelector onAnalyze={handleAnalyze} analyzing={analyzing} viewMode="library" />
           )}
 
           {/* Unified 3-Tier Detailed Results Display (renders when an analysis result is present) */}

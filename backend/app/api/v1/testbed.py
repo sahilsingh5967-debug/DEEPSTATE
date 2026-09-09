@@ -164,6 +164,18 @@ def analyze_experiment_record(experiment_id: str) -> Dict[str, Any]:
     analysis_res = analyze_pcap(str(abs_path))
     res_dict = analysis_res.model_dump() if hasattr(analysis_res, "model_dump") else analysis_res.dict()
 
+    # Inject experiment provenance & operator configuration metadata into analysis response
+    res_dict["experiment_metadata"] = {
+        "experiment_id": exp.get("experiment_id"),
+        "profile_id": exp.get("profile_id"),
+        "preset_id": exp.get("preset_id"),
+        "preset_name": exp.get("name") or exp.get("preset_name"),
+        "execution_mode": exp.get("execution_mode"),
+        "capture_id": exp.get("capture_id"),
+        "created_at": exp.get("timestamp"),
+        "config": exp.get("config", {})
+    }
+
     # Update experiment history record status
     exp["analysis_status"] = "analyzed"
     exp["latest_analysis"] = {
