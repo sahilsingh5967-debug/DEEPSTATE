@@ -119,8 +119,16 @@ def execute_custom_experiment_capture(config: ExperimentConfig) -> Dict[str, Any
             container_pcap_path = f"/captures/generated/{filename}"
             run_docker_cmd(["exec", CONTAINER_PEER_A, "mkdir", "-p", "/captures/generated"], timeout_sec=5)
 
-            filter_expr = f"udp port 500 or udp port 4500 or ip proto 50 or ip proto 1 or tcp port {config.destination_port} or udp port {config.destination_port}"
-            tcpdump_cmd = ["exec", "-d", CONTAINER_PEER_A, "tcpdump", "-i", "eth0", "-w", container_pcap_path, filter_expr]
+            tcpdump_cmd = [
+                "exec", "-d", CONTAINER_PEER_A,
+                "tcpdump", "-i", "eth0", "-w", container_pcap_path,
+                "udp", "port", "500",
+                "or", "udp", "port", "4500",
+                "or", "ip", "proto", "50",
+                "or", "ip", "proto", "1",
+                "or", "tcp", "port", str(config.destination_port),
+                "or", "udp", "port", str(config.destination_port)
+            ]
             run_docker_cmd(tcpdump_cmd, timeout_sec=5)
             time.sleep(1.0)
 

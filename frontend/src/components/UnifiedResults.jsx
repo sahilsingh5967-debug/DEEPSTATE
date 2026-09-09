@@ -259,8 +259,8 @@ export default function UnifiedResults({ result }) {
             </div>
             <div style={{ fontSize: '13px', color: '#252525', lineHeight: '1.4' }}>
               <div>Profile: <strong>{expMeta.preset_name || expConfig.name || 'Standard Setup'}</strong></div>
-              <div>DH Group: <strong>{formatDhGroup(expConfig.dh_group || (ike?.dh_groups?.length > 0 ? ike.dh_groups[0] : 'Group 19'))}</strong></div>
-              <div>Cipher: <strong>{expConfig.encryption || (ike?.encryption_algorithms?.length > 0 ? ike.encryption_algorithms[0] : 'AES-256-GCM')}</strong></div>
+              <div>DH Group: <strong>{formatDhGroup(expConfig.dh_group || 'Group 19')}</strong></div>
+              <div>Cipher: <strong>{expConfig.encryption || 'AES-256-GCM'}</strong></div>
               <div>Traffic: <strong>{expConfig.traffic_type || 'WEB-LIKE'}</strong></div>
             </div>
           </div>
@@ -269,13 +269,15 @@ export default function UnifiedResults({ result }) {
           <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #EDEAE1', borderRadius: '8px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '11px', fontWeight: '700', color: '#8A877E', textTransform: 'uppercase' }}>2. OBSERVED EVIDENCE</span>
-              <span style={{ fontSize: '10px', fontWeight: '700', padding: '2px 6px', borderRadius: '4px', backgroundColor: '#E7EDF0', color: '#596F7D' }}>DETERMINISTIC</span>
+              <span style={{ fontSize: '10px', fontWeight: '700', padding: '2px 6px', borderRadius: '4px', backgroundColor: (pcap_metadata?.packet_count || 0) > 0 ? '#E7EDF0' : '#F5EBD5', color: (pcap_metadata?.packet_count || 0) > 0 ? '#596F7D' : '#B57B22' }}>
+                {(pcap_metadata?.packet_count || 0) > 0 ? 'DETERMINISTIC' : 'ZERO FRAMES'}
+              </span>
             </div>
             <div style={{ fontSize: '13px', color: '#252525', lineHeight: '1.4' }}>
               <div>Packets: <strong>{pcap_metadata?.packet_count || 0} frames</strong></div>
-              <div>Protocol: <strong>{ike?.detected ? (ike.version || 'IKEv2') : 'ESP (Proto 50)'}</strong></div>
-              <div>Payload DH: <strong>{ike?.dh_groups?.length > 0 ? ike.dh_groups.join(', ') : 'Unobservable in Payload'}</strong></div>
-              <div>Encapsulation: <strong>{esp?.encapsulation || (esp?.detected ? 'ESP in UDP' : 'Direct ESP')}</strong></div>
+              <div>Protocol: <strong>{(pcap_metadata?.packet_count || 0) === 0 ? 'None Observed (0 frames)' : ike?.detected ? (ike.version || 'IKEv2') : esp?.detected ? 'ESP (Proto 50)' : 'IP Traffic'}</strong></div>
+              <div>Payload DH: <strong>{(pcap_metadata?.packet_count || 0) === 0 ? 'None Observed (0 frames)' : ike?.dh_groups?.length > 0 ? ike.dh_groups.join(', ') : 'Unobservable in Payload'}</strong></div>
+              <div>Encapsulation: <strong>{(pcap_metadata?.packet_count || 0) === 0 ? 'None Observed (0 frames)' : esp?.encapsulation || (esp?.detected ? 'ESP in UDP' : 'Direct ESP')}</strong></div>
             </div>
           </div>
 
@@ -289,7 +291,7 @@ export default function UnifiedResults({ result }) {
               <div>Security Score: <strong>{security_assessment?.security_score?.toFixed(1) || 0} / 100</strong></div>
               <div>Risk Level: <strong>{security_assessment?.risk_level || 'LOW'}</strong></div>
               <div>Evaluated Checks: <strong>{security_assessment?.findings?.length || 0} policy rules</strong></div>
-              <div>DH Verification: <strong>{ike?.dh_groups?.length === 0 ? 'Verified via Config' : 'Observed in Handshake'}</strong></div>
+              <div>DH Verification: <strong>{(pcap_metadata?.packet_count || 0) === 0 ? 'Unobservable (0 frames)' : ike?.dh_groups?.length === 0 ? 'Verified via Config' : 'Observed in Handshake'}</strong></div>
             </div>
           </div>
 
@@ -360,10 +362,19 @@ export default function UnifiedResults({ result }) {
           <div style={{ backgroundColor: '#FFFDF8', border: '1px solid #EDEAE1', padding: '14px', borderRadius: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', color: '#8A877E' }}>IKE VERSION</span>
-              <span style={{ fontSize: '10px', fontWeight: '700', padding: '2px 6px', borderRadius: '4px', backgroundColor: '#E7EDF0', color: '#596F7D' }}>OBSERVED</span>
+              <span style={{
+                fontSize: '10px',
+                fontWeight: '700',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                backgroundColor: (pcap_metadata?.packet_count || 0) > 0 && ike?.detected ? '#E7EDF0' : '#F5EBD5',
+                color: (pcap_metadata?.packet_count || 0) > 0 && ike?.detected ? '#596F7D' : '#B57B22'
+              }}>
+                {(pcap_metadata?.packet_count || 0) > 0 && ike?.detected ? 'OBSERVED' : 'NOT OBSERVED'}
+              </span>
             </div>
             <div style={{ fontSize: '15px', fontWeight: '700', color: '#252525', marginTop: '6px' }}>
-              {ike?.detected ? (ike.version || 'IKEv2') : 'Not Observed'}
+              {ike?.detected ? (ike.version || 'IKEv2') : 'None Observed (0 frames)'}
             </div>
           </div>
 
@@ -371,10 +382,30 @@ export default function UnifiedResults({ result }) {
           <div style={{ backgroundColor: '#FFFDF8', border: '1px solid #EDEAE1', padding: '14px', borderRadius: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', color: '#8A877E' }}>ENCRYPTION</span>
-              <span style={{ fontSize: '10px', fontWeight: '700', padding: '2px 6px', borderRadius: '4px', backgroundColor: '#E7EDF0', color: '#596F7D' }}>OBSERVED</span>
+              <span style={{
+                fontSize: '10px',
+                fontWeight: '700',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                backgroundColor: ike?.encryption_algorithms?.length > 0 ? '#E7EDF0' : '#F4E7B8',
+                color: ike?.encryption_algorithms?.length > 0 ? '#596F7D' : '#9A7618'
+              }}>
+                {ike?.encryption_algorithms?.length > 0 ? 'OBSERVED' : 'CONFIGURED'}
+              </span>
             </div>
             <div style={{ fontSize: '14px', fontWeight: '700', color: '#252525', marginTop: '6px' }}>
-              {ike?.encryption_algorithms?.join(', ') || expConfig.encryption || 'AES-256-GCM / Encrypted'}
+              {ike?.encryption_algorithms?.length > 0 ? (
+                ike.encryption_algorithms.join(', ')
+              ) : expConfig.encryption ? (
+                <div>
+                  <div>{expConfig.encryption}</div>
+                  <div style={{ fontSize: '11px', fontWeight: '500', color: '#66645D', marginTop: '2px' }}>
+                    {(pcap_metadata?.packet_count || 0) === 0 ? 'None Observed (0 frames)' : 'Encrypted in ESP Payload'}
+                  </div>
+                </div>
+              ) : (
+                'AES-256-GCM (Configured)'
+              )}
             </div>
           </div>
 
@@ -382,10 +413,30 @@ export default function UnifiedResults({ result }) {
           <div style={{ backgroundColor: '#FFFDF8', border: '1px solid #EDEAE1', padding: '14px', borderRadius: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', color: '#8A877E' }}>INTEGRITY / AUTH</span>
-              <span style={{ fontSize: '10px', fontWeight: '700', padding: '2px 6px', borderRadius: '4px', backgroundColor: '#E7EDF0', color: '#596F7D' }}>OBSERVED</span>
+              <span style={{
+                fontSize: '10px',
+                fontWeight: '700',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                backgroundColor: ike?.integrity_algorithms?.length > 0 ? '#E7EDF0' : '#F4E7B8',
+                color: ike?.integrity_algorithms?.length > 0 ? '#596F7D' : '#9A7618'
+              }}>
+                {ike?.integrity_algorithms?.length > 0 ? 'OBSERVED' : 'CONFIGURED'}
+              </span>
             </div>
             <div style={{ fontSize: '14px', fontWeight: '700', color: '#252525', marginTop: '6px' }}>
-              {ike?.integrity_algorithms?.join(', ') || expConfig.integrity || 'SHA2-256 / AEAD'}
+              {ike?.integrity_algorithms?.length > 0 ? (
+                ike.integrity_algorithms.join(', ')
+              ) : expConfig.integrity ? (
+                <div>
+                  <div>{expConfig.integrity}</div>
+                  <div style={{ fontSize: '11px', fontWeight: '500', color: '#66645D', marginTop: '2px' }}>
+                    {(pcap_metadata?.packet_count || 0) === 0 ? 'None Observed (0 frames)' : 'AEAD / Encrypted'}
+                  </div>
+                </div>
+              ) : (
+                'SHA2-256 (Configured)'
+              )}
             </div>
           </div>
 
@@ -411,7 +462,7 @@ export default function UnifiedResults({ result }) {
                 <div>
                   <div>{formatDhGroup(expConfig.dh_group)}</div>
                   <div style={{ fontSize: '11px', fontWeight: '500', color: '#66645D', marginTop: '2px' }}>
-                    Unobservable in PCAP frame
+                    {(pcap_metadata?.packet_count || 0) === 0 ? 'None Observed (0 frames)' : 'Unobservable in PCAP frame'}
                   </div>
                 </div>
               ) : (
@@ -424,10 +475,19 @@ export default function UnifiedResults({ result }) {
           <div style={{ backgroundColor: '#FFFDF8', border: '1px solid #EDEAE1', padding: '14px', borderRadius: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', color: '#8A877E' }}>IPSEC MODE</span>
-              <span style={{ fontSize: '10px', fontWeight: '700', padding: '2px 6px', borderRadius: '4px', backgroundColor: '#E7EDF0', color: '#596F7D' }}>INFERRED</span>
+              <span style={{
+                fontSize: '10px',
+                fontWeight: '700',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                backgroundColor: mode_inference?.inferred_mode?.value ? '#E7EDF0' : '#F4E7B8',
+                color: mode_inference?.inferred_mode?.value ? '#596F7D' : '#9A7618'
+              }}>
+                {mode_inference?.inferred_mode?.value ? 'INFERRED' : 'CONFIGURED'}
+              </span>
             </div>
             <div style={{ fontSize: '14px', fontWeight: '700', color: '#9A7618', marginTop: '6px' }}>
-              {mode_inference?.inferred_mode?.value || expConfig.mode || 'Tunnel Mode'}
+              {mode_inference?.inferred_mode?.value || (expConfig.mode ? `${expConfig.mode} Mode (Configured)` : 'Tunnel Mode')}
             </div>
           </div>
 
@@ -435,10 +495,19 @@ export default function UnifiedResults({ result }) {
           <div style={{ backgroundColor: '#FFFDF8', border: '1px solid #EDEAE1', padding: '14px', borderRadius: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', color: '#8A877E' }}>ESP ENCAPSULATION</span>
-              <span style={{ fontSize: '10px', fontWeight: '700', padding: '2px 6px', borderRadius: '4px', backgroundColor: '#E7EDF0', color: '#596F7D' }}>OBSERVED</span>
+              <span style={{
+                fontSize: '10px',
+                fontWeight: '700',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                backgroundColor: (pcap_metadata?.packet_count || 0) > 0 && esp?.detected ? '#E7EDF0' : '#F5EBD5',
+                color: (pcap_metadata?.packet_count || 0) > 0 && esp?.detected ? '#596F7D' : '#B57B22'
+              }}>
+                {(pcap_metadata?.packet_count || 0) > 0 && esp?.detected ? 'OBSERVED' : 'NOT OBSERVED'}
+              </span>
             </div>
             <div style={{ fontSize: '14px', fontWeight: '700', color: '#252525', marginTop: '6px' }}>
-              {esp?.detected ? (esp.encapsulation || 'ESP in UDP') : 'Not Present'}
+              {(pcap_metadata?.packet_count || 0) > 0 && esp?.detected ? (esp.encapsulation || 'ESP in UDP') : 'None Observed (0 frames)'}
             </div>
           </div>
         </div>

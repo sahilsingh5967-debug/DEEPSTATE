@@ -24,16 +24,23 @@ def generate_experiment_traffic(
     Generates live container or synthetic fallback traffic according to specified experiment parameters.
     """
     t_type = traffic_type.upper()
-    target_port = port if port is not None else 5060 if t_type == "VOIP-LIKE" else 443 if t_type in ("WEB", "FILE-TRANSFER-LIKE") else 53 if t_type == "DNS-LIKE" else 5001
+    target_port = port if port is not None else 5060 if t_type in ("VOIP", "VOIP-LIKE", "VOIP_AUDIO") else 443 if t_type in ("WEB", "WEB-LIKE", "WEB_INTERACTIVE", "FILE_TRANSFER", "FILE-TRANSFER-LIKE", "BULK_TRANSFER") else 53 if t_type in ("DNS", "DNS-LIKE") else 8080 if t_type == "STREAMING_MEDIA" else 5001
+
+    ICMP_TYPES = ("ICMP", "ICMP_DIAGNOSTIC")
+    UDP_TYPES = ("UDP", "DNS", "DNS-LIKE", "VOIP", "VOIP-LIKE", "VOIP_AUDIO")
+    TCP_TYPES = ("TCP", "WEB", "WEB-LIKE", "WEB_INTERACTIVE", "FILE_TRANSFER", "FILE-TRANSFER-LIKE", "BULK_TRANSFER", "STREAMING_MEDIA")
+
+    if t_type not in ICMP_TYPES and t_type not in UDP_TYPES and t_type not in TCP_TYPES:
+        raise ValueError(f"Unsupported or unrecognized traffic_type: '{traffic_type}'. Must be one of ICMP, UDP, TCP, WEB, DNS, VOIP, FILE_TRANSFER or valid Phase 11.5 aliases.")
 
     live_container = check_container_status(CONTAINER_PEER_A) and check_container_status(CONTAINER_PEER_B)
 
     if live_container:
-        if t_type == "ICMP":
+        if t_type in ICMP_TYPES:
             cmd = ["exec", CONTAINER_PEER_A, "ping", "-I", src_ip, "-c", str(packet_count), dst_ip]
             res = run_docker_cmd(cmd, timeout_sec=max(15, duration + 5))
             output = res.stdout.strip()
-        elif t_type in ("UDP", "DNS-LIKE", "VOIP-LIKE"):
+        elif t_type in UDP_TYPES:
             interval = max(0.005, 1.0 / max(1, packet_rate))
             py_script = f"""
 import socket, time
@@ -48,7 +55,7 @@ sock.close()
             cmd = ["exec", CONTAINER_PEER_A, "python3", "-c", py_script]
             res = run_docker_cmd(cmd, timeout_sec=max(15, duration + 5))
             output = f"Generated {packet_count} {t_type} UDP datagrams ({payload_size}B) to {dst_ip}:{target_port}"
-        elif t_type in ("TCP", "WEB", "FILE-TRANSFER-LIKE"):
+        elif t_type in TCP_TYPES:
             interval = max(0.005, 1.0 / max(1, packet_rate))
             listener_script = f"""
 import socket
