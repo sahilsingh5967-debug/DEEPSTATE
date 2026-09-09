@@ -1,28 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color-scheme: dark;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light;
+
+  --bg-primary: #F4F1E8;
+  --surface-main: #FFFDF8;
+  --surface-secondary: #EDEAE1;
+  --surface-card: #FFFFFF;
+  --border-subtle: #D8D4C8;
+  --border-strong: #C5C0B3;
+
+  --text-primary: #252525;
+  --text-secondary: #66645D;
+  --text-muted: #8A877E;
+
+  --accent-yellow: #D6A928;
+  --accent-hover: #BF941F;
+  --accent-light: #F4E7B8;
+  --accent-dark: #9A7618;
+
+  --success: #3F7654;
+  --success-light: #E3EEE7;
+  --warning: #B57B22;
+  --warning-light: #F5EBD5;
+  --danger: #A94B43;
+  --danger-light: #F3E2E0;
+  --info: #596F7D;
+  --info-light: #E7EDF0;
+
+  --shadow-subtle: 0 2px 8px rgba(30, 30, 20, 0.05);
+  --shadow-modal: 0 16px 50px rgba(30, 30, 20, 0.18);
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #090d16;
-  color: #f1f5f9;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 code, pre {
   font-family: 'JetBrains Mono', monospace;
-}
-
-.glow-blue {
-  box-shadow: 0 0 20px -5px rgba(59, 130, 246, 0.25);
-}
-
-.glow-green {
-  box-shadow: 0 0 20px -5px rgba(34, 197, 94, 0.25);
 }
 
 /* Custom Scrollbars */
@@ -31,12 +53,38 @@ code, pre {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: var(--surface-secondary);
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: var(--border-strong);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: var(--text-muted);
+}
+
+/* Form Input Standard Styling */
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent-yellow) !important;
+  box-shadow: 0 0 0 2px rgba(214, 169, 40, 0.18) !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
 }

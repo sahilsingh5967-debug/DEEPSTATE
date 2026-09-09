@@ -1,101 +1,129 @@
 import React from 'react';
-import { Shield, Server, Activity, Cpu } from 'lucide-react';
+import { Shield, FlaskConical, Play, HardDrive, LayoutDashboard } from 'lucide-react';
 
-export default function Header({ backendHealth, loading, pipelineStatus = 'idle' }) {
-  const isHealthy = backendHealth?.status === 'ok';
+export default function Header({ backendHealth, loading, activeTab, setActiveTab }) {
+  const backendOk = backendHealth?.status === 'ok' || backendHealth?.status === 'healthy';
 
-  const getPipelineBadge = () => {
-    switch (pipelineStatus) {
-      case 'analyzing':
-        return { label: 'Pipeline: Analyzing', bg: 'rgba(56, 189, 248, 0.12)', border: 'rgba(56, 189, 248, 0.3)', color: '#38bdf8' };
-      case 'completed':
-        return { label: 'Pipeline: Completed', bg: 'rgba(34, 197, 94, 0.12)', border: 'rgba(34, 197, 94, 0.3)', color: '#4ade80' };
-      case 'failed':
-        return { label: 'Pipeline: Failed', bg: 'rgba(239, 68, 68, 0.12)', border: 'rgba(239, 68, 68, 0.3)', color: '#f87171' };
-      default:
-        return { label: 'Pipeline: Idle', bg: 'rgba(148, 163, 184, 0.12)', border: 'rgba(148, 163, 184, 0.3)', color: '#94a3b8' };
-    }
-  };
-
-  const pipeBadge = getPipelineBadge();
+  const navItems = [
+    { id: 'lab', label: 'Demonstration Lab', icon: FlaskConical },
+    { id: 'analyze', label: 'Analyze PCAP', icon: Play },
+    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'library', label: 'PCAP Library', icon: HardDrive },
+  ];
 
   return (
     <header style={{
+      height: '72px',
+      backgroundColor: '#FFFDF8',
+      borderBottom: '1px solid #D8D4C8',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: '16px 28px',
-      backgroundColor: '#070a12',
-      borderBottom: '1px solid #1e293b'
+      padding: '0 32px',
+      boxSizing: 'border-box',
+      position: 'sticky',
+      top: 0,
+      zIndex: 100
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+      {/* Left Branding */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div style={{
-          padding: '10px',
-          backgroundColor: 'rgba(14, 165, 233, 0.1)',
-          borderRadius: '10px',
-          border: '1px solid rgba(14, 165, 233, 0.25)'
+          width: '38px',
+          height: '38px',
+          borderRadius: '8px',
+          backgroundColor: '#F4E7B8',
+          border: '1px solid #D6A928',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#9A7618'
         }}>
-          <Shield style={{ width: '26px', height: '26px', color: '#0ea5e9' }} />
+          <Shield style={{ width: '20px', height: '20px' }} />
         </div>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <h1 style={{ margin: 0, fontSize: '20px', fontWeight: '800', color: '#f8fafc', letterSpacing: '0.04em' }}>
-              DEEPSTATE
-            </h1>
-            <span style={{
-              fontSize: '10px',
-              fontWeight: '700',
-              padding: '2px 8px',
-              borderRadius: '4px',
-              backgroundColor: 'rgba(14, 165, 233, 0.15)',
-              color: '#38bdf8',
-              border: '1px solid rgba(14, 165, 233, 0.3)',
-              letterSpacing: '0.05em'
-            }}>
-              SOC v0.1.0
-            </span>
-          </div>
-          <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: '500' }}>
+          <h1 style={{ margin: 0, fontSize: '20px', fontWeight: '700', color: '#252525', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            DEEPSTATE
+          </h1>
+          <span style={{ fontSize: '11px', fontWeight: '500', color: '#77736A' }}>
             IPsec Security Intelligence Platform
           </span>
         </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        {/* Backend Status Indicator */}
+      {/* Center Navigation Links */}
+      <nav style={{ display: 'flex', gap: '6px', backgroundColor: '#EDEAE1', padding: '4px', borderRadius: '9px', border: '1px solid #D8D4C8' }}>
+        {navItems.map(item => {
+          const Icon = item.icon;
+          const isActive = activeTab === item.id;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setActiveTab(item.id)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '7px',
+                height: '36px',
+                padding: '0 14px',
+                borderRadius: '7px',
+                fontSize: '13px',
+                fontWeight: isActive ? '700' : '500',
+                cursor: 'pointer',
+                border: isActive ? '1px solid #D6A928' : 'none',
+                backgroundColor: isActive ? '#F4E7B8' : 'transparent',
+                color: isActive ? '#252525' : '#66645D',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <Icon style={{ width: '15px', height: '15px', color: isActive ? '#9A7618' : '#8A877E' }} />
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* Right Operational Status Pills */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {/* Backend Status Pill */}
         <div style={{
+          height: '32px',
+          padding: '0 12px',
+          borderRadius: '16px',
+          backgroundColor: backendOk ? '#E3EEE7' : '#F3E2E0',
+          color: backendOk ? '#3F7654' : '#A94B43',
+          border: `1px solid ${backendOk ? '#BFD7C7' : '#E8C4C1'}`,
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
-          padding: '6px 14px',
-          borderRadius: '20px',
+          gap: '6px',
           fontSize: '12px',
-          fontWeight: '600',
-          backgroundColor: isHealthy ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-          border: `1px solid ${isHealthy ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
-          color: isHealthy ? '#4ade80' : '#f87171'
+          fontWeight: '600'
         }}>
-          <Server style={{ width: '13px', height: '13px' }} />
-          <span>
-            Backend: {loading ? 'Connecting...' : isHealthy ? `Operational (v${backendHealth.version})` : 'Offline'}
-          </span>
+          <span style={{
+            width: '7px',
+            height: '7px',
+            borderRadius: '50%',
+            backgroundColor: backendOk ? '#3F7654' : '#A94B43'
+          }} />
+          <span>{loading ? 'Connecting...' : backendOk ? 'Backend Operational' : 'Backend Offline'}</span>
         </div>
 
-        {/* Pipeline Status Indicator */}
+        {/* Pipeline Status Pill */}
         <div style={{
+          height: '32px',
+          padding: '0 12px',
+          borderRadius: '16px',
+          backgroundColor: '#F4E7B8',
+          color: '#9A7618',
+          border: '1px solid #E3D08C',
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
-          padding: '6px 14px',
-          borderRadius: '20px',
+          gap: '6px',
           fontSize: '12px',
-          fontWeight: '600',
-          backgroundColor: pipeBadge.bg,
-          border: `1px solid ${pipeBadge.border}`,
-          color: pipeBadge.color
+          fontWeight: '600'
         }}>
-          <Activity style={{ width: '13px', height: '13px' }} />
-          <span>{pipeBadge.label}</span>
+          <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#D6A928' }} />
+          <span>Analysis Pipeline Ready</span>
         </div>
       </div>
     </header>

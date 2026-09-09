@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Play, Loader2, HardDrive, AlertCircle } from 'lucide-react';
+import { Play, Loader2, HardDrive, AlertCircle, FileText } from 'lucide-react';
 import { fetchAvailablePcaps } from '../api/client';
 
 export default function PcapSelector({ onAnalyze, analyzing }) {
@@ -33,22 +33,33 @@ export default function PcapSelector({ onAnalyze, analyzing }) {
 
   return (
     <div style={{
-      backgroundColor: '#0f172a',
-      borderRadius: '12px',
-      border: '1px solid #1e293b',
+      backgroundColor: '#FFFFFF',
+      borderRadius: '10px',
+      border: '1px solid #D8D4C8',
       padding: '24px',
+      boxShadow: '0 2px 8px rgba(30, 30, 20, 0.05)',
       display: 'flex',
       flexDirection: 'column',
-      gap: '16px'
+      gap: '20px'
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #E3DFD4', paddingBottom: '14px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <HardDrive style={{ width: '20px', height: '20px', color: '#38bdf8' }} />
-          <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '600', color: '#f1f5f9' }}>
-            DEEPSTATE PCAP Ingestion & Analysis Control
-          </h3>
+          <div style={{ padding: '8px', borderRadius: '7px', backgroundColor: '#F4E7B8', color: '#9A7618' }}>
+            <HardDrive style={{ width: '18px', height: '18px' }} />
+          </div>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '700', color: '#252525' }}>
+              PCAP Ingestion & Analysis Controls
+            </h3>
+            <span style={{ fontSize: '12px', color: '#66645D' }}>
+              Select ground-truth captures, synthetic fixtures, or custom path for 3-tier analysis
+            </span>
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
+
+        {/* Toggle Mode Buttons */}
+        <div style={{ display: 'flex', gap: '6px', backgroundColor: '#EDEAE1', padding: '3px', borderRadius: '8px', border: '1px solid #D8D4C8' }}>
           <button
             type="button"
             onClick={() => setUseCustom(false)}
@@ -58,12 +69,12 @@ export default function PcapSelector({ onAnalyze, analyzing }) {
               fontSize: '12px',
               fontWeight: '600',
               cursor: 'pointer',
-              border: 'none',
-              backgroundColor: !useCustom ? '#2563eb' : '#1e293b',
-              color: !useCustom ? '#ffffff' : '#94a3b8'
+              border: !useCustom ? '1px solid #D6A928' : 'none',
+              backgroundColor: !useCustom ? '#F4E7B8' : 'transparent',
+              color: !useCustom ? '#252525' : '#66645D'
             }}
           >
-            Presets
+            PCAP Presets
           </button>
           <button
             type="button"
@@ -74,9 +85,9 @@ export default function PcapSelector({ onAnalyze, analyzing }) {
               fontSize: '12px',
               fontWeight: '600',
               cursor: 'pointer',
-              border: 'none',
-              backgroundColor: useCustom ? '#2563eb' : '#1e293b',
-              color: useCustom ? '#ffffff' : '#94a3b8'
+              border: useCustom ? '1px solid #D6A928' : 'none',
+              backgroundColor: useCustom ? '#F4E7B8' : 'transparent',
+              color: useCustom ? '#252525' : '#66645D'
             }}
           >
             Custom Path
@@ -84,10 +95,10 @@ export default function PcapSelector({ onAnalyze, analyzing }) {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {!useCustom ? (
           <div>
-            <label style={{ display: 'block', fontSize: '13px', color: '#94a3b8', marginBottom: '6px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#66645D', marginBottom: '6px' }}>
               Select PCAP Capture Artifact:
             </label>
             <select
@@ -96,12 +107,13 @@ export default function PcapSelector({ onAnalyze, analyzing }) {
               disabled={analyzing}
               style={{
                 width: '100%',
-                padding: '10px 14px',
-                borderRadius: '8px',
-                backgroundColor: '#1e293b',
-                border: '1px solid #334155',
-                color: '#f8fafc',
-                fontSize: '14px',
+                height: '42px',
+                padding: '0 14px',
+                borderRadius: '7px',
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #CFCABE',
+                color: '#252525',
+                fontSize: '13px',
                 fontFamily: 'monospace',
                 outline: 'none'
               }}
@@ -115,7 +127,7 @@ export default function PcapSelector({ onAnalyze, analyzing }) {
           </div>
         ) : (
           <div>
-            <label style={{ display: 'block', fontSize: '13px', color: '#94a3b8', marginBottom: '6px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#66645D', marginBottom: '6px' }}>
               Enter Relative or Absolute PCAP File Path:
             </label>
             <input
@@ -126,12 +138,13 @@ export default function PcapSelector({ onAnalyze, analyzing }) {
               disabled={analyzing}
               style={{
                 width: '100%',
-                padding: '10px 14px',
-                borderRadius: '8px',
-                backgroundColor: '#1e293b',
-                border: '1px solid #334155',
-                color: '#f8fafc',
-                fontSize: '14px',
+                height: '42px',
+                padding: '0 14px',
+                borderRadius: '7px',
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #CFCABE',
+                color: '#252525',
+                fontSize: '13px',
                 fontFamily: 'monospace',
                 outline: 'none'
               }}
@@ -145,10 +158,10 @@ export default function PcapSelector({ onAnalyze, analyzing }) {
             alignItems: 'center',
             gap: '8px',
             padding: '10px 14px',
-            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
+            backgroundColor: '#F3E2E0',
+            border: '1px solid #E8C4C1',
             borderRadius: '6px',
-            color: '#f87171',
+            color: '#A94B43',
             fontSize: '13px'
           }}>
             <AlertCircle style={{ width: '16px', height: '16px' }} />
@@ -164,31 +177,86 @@ export default function PcapSelector({ onAnalyze, analyzing }) {
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              padding: '10px 20px',
+              height: '42px',
+              padding: '0 22px',
               borderRadius: '8px',
               fontSize: '14px',
-              fontWeight: '600',
+              fontWeight: '700',
               cursor: analyzing ? 'not-allowed' : 'pointer',
               border: 'none',
-              backgroundColor: analyzing ? '#475569' : '#0284c7',
-              color: '#ffffff',
-              transition: 'background-color 0.2s'
+              backgroundColor: analyzing ? '#77736A' : '#252525',
+              color: '#FFFFFF',
+              transition: 'background-color 0.15s'
             }}
           >
             {analyzing ? (
               <>
                 <Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} />
-                <span>Running Unified Pipeline...</span>
+                <span>Executing 3-Tier Pipeline...</span>
               </>
             ) : (
               <>
-                <Play style={{ width: '16px', height: '16px' }} />
+                <Play style={{ width: '16px', height: '16px', color: '#D6A928' }} />
                 <span>Execute Unified Analysis</span>
               </>
             )}
           </button>
         </div>
       </form>
+
+      {/* Preset PCAP Library Table */}
+      {pcaps.length > 0 && !useCustom && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
+          <span style={{ fontSize: '11px', fontWeight: '700', color: '#8A877E', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            Available PCAP Repository Files ({pcaps.length} Artifacts)
+          </span>
+          <div style={{ overflowX: 'auto', border: '1px solid #D8D4C8', borderRadius: '8px' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'left' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#EDEAE1', borderBottom: '1px solid #D8D4C8', color: '#66645D', fontSize: '12px', fontWeight: '700' }}>
+                  <th style={{ padding: '10px 14px' }}>Artifact Name</th>
+                  <th style={{ padding: '10px 14px' }}>Category</th>
+                  <th style={{ padding: '10px 14px' }}>Size</th>
+                  <th style={{ padding: '10px 14px', textAlign: 'right' }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pcaps.map((p, idx) => (
+                  <tr key={p.id} style={{ borderBottom: idx === pcaps.length - 1 ? 'none' : '1px solid #E3DFD4', backgroundColor: '#FFFFFF' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: '600', color: '#252525', fontFamily: 'monospace' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <FileText style={{ width: '14px', height: '14px', color: '#D6A928' }} />
+                        <span>{p.name}</span>
+                      </div>
+                    </td>
+                    <td style={{ padding: '10px 14px', color: '#66645D' }}>{p.category}</td>
+                    <td style={{ padding: '10px 14px', color: '#8A877E', fontFamily: 'monospace' }}>{p.size_bytes} bytes</td>
+                    <td style={{ padding: '10px 14px', textAlign: 'right' }}>
+                      <button
+                        type="button"
+                        onClick={() => onAnalyze(p.file_path)}
+                        disabled={analyzing}
+                        style={{
+                          padding: '5px 12px',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          backgroundColor: '#F4E7B8',
+                          border: '1px solid #D6A928',
+                          color: '#252525',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Analyze
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

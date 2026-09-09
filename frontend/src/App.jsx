@@ -1,34 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
+import Dashboard from './components/Dashboard';
 import PcapSelector from './components/PcapSelector';
 import UnifiedResults from './components/UnifiedResults';
 import DemonstrationLab from './components/DemonstrationLab';
-import { fetchBackendHealth, analyzePcap } from './api/client';
-import { AlertTriangle, ShieldCheck, FlaskConical } from 'lucide-react';
+import { fetchBackendHealth, fetchAvailablePcaps, analyzePcap } from './api/client';
+import { AlertTriangle } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('lab'); // Default to Demonstration Lab 2.0 for SIH presentation
+  const [activeTab, setActiveTab] = useState('overview'); // Default to Main DEEPSTATE Dashboard for Phase 9.2
   const [health, setHealth] = useState(null);
   const [loadingHealth, setLoadingHealth] = useState(true);
+  const [pcaps, setPcaps] = useState([]);
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
   const [apiError, setApiError] = useState('');
+  const resultsRef = useRef(null);
 
   useEffect(() => {
-    async function loadHealth() {
+    async function loadInitialData() {
       setLoadingHealth(true);
-      const data = await fetchBackendHealth();
-      setHealth(data);
+      const [healthData, pcapsData] = await Promise.all([
+        fetchBackendHealth(),
+        fetchAvailablePcaps()
+      ]);
+      setHealth(healthData);
+      setPcaps(pcapsData);
       setLoadingHealth(false);
     }
-    loadHealth();
+    loadInitialData();
   }, []);
 
   const handleAnalyze = async (filePath) => {
     setAnalyzing(true);
     setApiError('');
-    setAnalysisResult(null);
 
     try {
       const result = await analyzePcap(filePath);
@@ -45,106 +51,100 @@ export default function App() {
     setApiError('');
   };
 
-  const pipelineStatus = analyzing
-    ? 'analyzing'
-    : apiError
-    ? 'failed'
-    : analysisResult
-    ? 'completed'
-    : 'idle';
+  const scrollToResults = () => {
+    if (resultsRef.current) {
+      resultsRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#090d16', color: '#f8fafc' }}>
-      <Header backendHealth={health} loading={loadingHealth} pipelineStatus={pipelineStatus} />
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#F4F1E8', color: '#252525', fontFamily: "'Inter', sans-serif" }}>
+      {/* Top 72px Navigation Header from Phase 9.1 */}
+      <Header backendHealth={health} loading={loadingHealth} activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      <div style={{ display: 'flex', flex: 1 }}>
+      {/* Main Content Area (Sidebar returns null, max 1480px centered) */}
+      <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
         <Sidebar />
 
-        <main style={{ flex: 1, padding: '28px', display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1400px' }}>
+        <main style={{
+          width: '100%',
+          maxWidth: '1480px',
+          padding: '32px 24px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '24px',
+          boxSizing: 'border-box'
+        }}>
 
-          {/* Top Mode Selector Tabs */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1e293b', paddingBottom: '16px' }}>
-            <div>
-              <h2 style={{ margin: '0 0 4px', fontSize: '22px', fontWeight: '700', color: '#f8fafc' }}>
-                DEEPSTATE — IPsec VPN Security Intelligence Center
-              </h2>
-              <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8' }}>
-                Deterministic Protocol Parsing (Tier A) • Policy Rule Scoring (Tier B) • Encrypted Traffic ML Inference (Tier C)
-              </p>
+          {/* Failure Alert Box */}
+          {apiError && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '16px 20px',
+              backgroundColor: '#F3E2E0',
+              border: '1px solid #E2B9B5',
+              borderRadius: '10px',
+              color: '#7D2822',
+              boxShadow: '0 2px 8px rgba(37,37,37,0.04)'
+            }}>
+              <AlertTriangle style={{ width: '20px', height: '20px', flexShrink: 0, color: '#A94B43' }} />
+              <div style={{ fontSize: '13px', fontWeight: '500' }}>
+                <strong style={{ color: '#7D2822' }}>Analysis Pipeline Failure:</strong> {apiError}
+              </div>
             </div>
+          )}
 
-            <div style={{ display: 'flex', gap: '8px', backgroundColor: '#0f172a', padding: '4px', borderRadius: '10px', border: '1px solid #1e293b' }}>
-              <button
-                type="button"
-                onClick={() => setActiveTab('lab')}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '8px',
-                  padding: '8px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: '700',
-                  cursor: 'pointer', border: 'none',
-                  backgroundColor: activeTab === 'lab' ? '#0284c7' : 'transparent',
-                  color: activeTab === 'lab' ? '#ffffff' : '#94a3b8'
-                }}
-              >
-                <FlaskConical style={{ width: '16px', height: '16px' }} />
-                <span>Demonstration Lab 2.0</span>
-              </button>
+          {/* TAB CONTENT VIEWS */}
+          {activeTab === 'overview' && (
+            <Dashboard
+              analysisResult={analysisResult}
+              onAnalyze={handleAnalyze}
+              onNavigate={setActiveTab}
+              health={health}
+              pcaps={pcaps}
+              onViewFullAnalysis={scrollToResults}
+            />
+          )}
 
-              <button
-                type="button"
-                onClick={() => setActiveTab('soc')}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '8px',
-                  padding: '8px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: '700',
-                  cursor: 'pointer', border: 'none',
-                  backgroundColor: activeTab === 'soc' ? '#0284c7' : 'transparent',
-                  color: activeTab === 'soc' ? '#ffffff' : '#94a3b8'
-                }}
-              >
-                <ShieldCheck style={{ width: '16px', height: '16px' }} />
-                <span>Preset PCAP Ingestion</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Tab 1: Demonstration Lab 2.0 */}
           {activeTab === 'lab' && (
             <DemonstrationLab onAnalyzeResult={handleLabAnalysisResult} />
           )}
 
-          {/* Tab 2: Classic Preset Ingestion */}
-          {activeTab === 'soc' && (
+          {activeTab === 'analyze' && (
             <PcapSelector onAnalyze={handleAnalyze} analyzing={analyzing} />
           )}
 
-          {/* Failure Alert */}
-          {apiError && (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: '10px', padding: '16px',
-              backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)',
-              borderRadius: '8px', color: '#f87171'
-            }}>
-              <AlertTriangle style={{ width: '20px', height: '20px', flexShrink: 0 }} />
-              <div>
-                <strong>Analysis Pipeline Failure:</strong> {apiError}
-              </div>
-            </div>
+          {activeTab === 'library' && (
+            <PcapSelector onAnalyze={handleAnalyze} analyzing={analyzing} />
           )}
 
-          {/* Unified 3-Tier Results Display */}
+          {/* Unified 3-Tier Detailed Results Display (renders when an analysis result is present) */}
           {analysisResult && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#0f172a', padding: '12px 18px', borderRadius: '8px', border: '1px solid #1e293b' }}>
-                <span style={{ fontSize: '14px', fontWeight: '700', color: '#38bdf8' }}>
-                  DEEPSTATE Unified Analysis Output (Session ID: {analysisResult.analysis_id})
+            <div ref={resultsRef} style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '12px' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                backgroundColor: '#FFFFFF',
+                padding: '14px 20px',
+                borderRadius: '10px',
+                border: '1px solid #D8D4C8',
+                boxShadow: '0 2px 8px rgba(37,37,37,0.04)'
+              }}>
+                <span style={{ fontSize: '14px', fontWeight: '700', color: '#252525' }}>
+                  Detailed Unified Analysis Report — Session <code style={{ backgroundColor: '#EDEAE1', padding: '2px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>{analysisResult.analysis_id}</code>
                 </span>
                 <button
                   type="button"
                   onClick={() => setAnalysisResult(null)}
-                  style={{ fontSize: '12px', color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer' }}
+                  style={{ fontSize: '12px', color: '#9A7618', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer' }}
                 >
                   Clear Results
                 </button>
               </div>
+
               <UnifiedResults result={analysisResult} />
             </div>
           )}
