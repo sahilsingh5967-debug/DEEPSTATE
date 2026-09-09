@@ -14,7 +14,7 @@ import math
 import os
 import sys
 from pathlib import Path
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any, List, Tuple, Optional
 import csv
 
 import joblib
@@ -342,6 +342,86 @@ def train_and_select_model(features_csv: Path = FEATURES_CSV, output_dir: Path =
     print("============================================================")
 
     return overall_eval_results
+
+
+def prepare_phase11_dataset_manifest(
+    features_csv: Path = FEATURES_CSV,
+    manifest_out_path: Optional[Path] = None
+) -> Dict[str, Any]:
+    """
+    Phase 11.3 Preparation Mode for Phase 11.4 Retraining.
+    Prepares Phase 11 dataset manifest using behavioral schema mapping and session-level splitting.
+    DO NOT overwrite production model artifacts (final_model.pkl / preprocessor.pkl).
+    """
+    from backend.app.ml.splitting import split_records_session_level
+    from backend.app.ml.schema import (
+        map_legacy_class_to_behavioral,
+        BEHAVIORAL_TARGET_CLASSES,
+        CLASS_UNKNOWN_UNCLASSIFIED
+    )
+
+    print("[*] Preparing Phase 11 Dataset Manifest (Dry-run Mode)...")
+    if not features_csv.exists():
+        return {"status": "error", "message": f"Features CSV not found at {features_csv}"}
+
+    records = load_dataset_records(features_csv)
+    clean_records, nan_cnt, inf_cnt = validate_records(records)
+
+    # Attach behavioral class to records if missing
+    for r in clean_records:
+        if "behavioral_class" not in r or not r["behavioral_class"]:
+            r["behavioral_class"] = map_legacy_class_to_behavioral(r.get("traffic_class"))
+
+    # Execute session-level grouped split
+    splits = split_records_session_level(clean_records, train_ratio=0.70, val_ratio=0.15, test_ratio=0.15, random_seed=42)
+
+    train_recs = splits["train"]
+    val_recs = splits["val"]
+    test_recs = splits["test"]
+
+    # Session ID isolation check
+    train_sids = set(r.get("capture_id") or r.get("session_id") for r in train_recs)
+    val_sids = set(r.get("capture_id") or r.get("session_id") for r in val_recs)
+    test_sids = set(r.get("capture_id") or r.get("session_id") for r in test_recs)
+
+    overlap_train_val = len(train_sids & val_sids)
+    overlap_train_test = len(train_sids & test_sids)
+    overlap_val_test = len(val_sids & test_sids)
+    zero_overlap = (overlap_train_val == 0 and overlap_train_test == 0 and overlap_val_test == 0)
+
+    # Class breakdown calculation
+    class_counts: Dict[str, int] = {}
+    for r in clean_records:
+        bclass = r["behavioral_class"]
+        class_counts[bclass] = class_counts.get(bclass, 0) + 1
+
+    manifest = {
+        "status": "prepared",
+        "phase": "11.3",
+        "timestamp": datetime.datetime.now().isoformat(),
+        "total_raw_records": len(records),
+        "total_clean_records": len(clean_records),
+        "validation": {"nan_count": nan_cnt, "inf_count": inf_cnt},
+        "session_split": {
+            "train_record_count": len(train_recs),
+            "val_record_count": len(val_recs),
+            "test_record_count": len(test_recs),
+            "train_session_count": len(train_sids),
+            "val_session_count": len(val_sids),
+            "test_session_count": len(test_sids),
+            "zero_session_overlap_verified": zero_overlap
+        },
+        "behavioral_class_counts": class_counts,
+        "target_schema": BEHAVIORAL_TARGET_CLASSES + [CLASS_UNKNOWN_UNCLASSIFIED]
+    }
+
+    if manifest_out_path:
+        manifest_out_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(manifest_out_path, "w", encoding="utf-8") as f:
+            json.dump(manifest, f, indent=2)
+        print(f"[+] Phase 11 dataset manifest saved to: {manifest_out_path}")
+
+    return manifest
 
 
 if __name__ == "__main__":

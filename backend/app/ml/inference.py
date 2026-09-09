@@ -23,6 +23,12 @@ from backend.app.ml.flow_extractor import Flow, extract_flows_from_pcap
 from backend.app.ml.features import ML_FEATURE_COLUMNS, extract_features_from_flow
 from backend.app.ml.evaluator import TARGET_CLASSES
 from backend.app.models.schemas import TrafficClassification
+from backend.app.ml.schema import (
+    apply_unknown_inference_policy,
+    map_legacy_class_to_behavioral,
+    REAL_IPSEC_GROUND_TRUTH_REGISTRY,
+    CLASS_UNKNOWN_UNCLASSIFIED
+)
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 MODEL_DIR = PROJECT_ROOT / "data" / "models"
@@ -50,6 +56,7 @@ class TrafficClassifierInference:
         """
         Infers probabilistic traffic class for a single Flow object.
         Returns dictionary matching `inferred_ml_classification` schema.
+        Applies centralized UNKNOWN_UNCLASSIFIED policy for low confidence or packet counts.
         """
         feat_dict = extract_features_from_flow(flow, dataset_id="INFERENCE")
         feat_vector = [float(feat_dict[col]) for col in self.feature_names]
@@ -71,25 +78,38 @@ class TrafficClassifierInference:
                     prob_dict[cname] = round(float(probs_arr[idx]), 4)
                 else:
                     prob_dict[cname] = 0.0
-            confidence = round(float(np.max(probs_arr)), 4)
+            raw_confidence = round(float(np.max(probs_arr)), 4)
         else:
             prob_dict = {cname: (1.0 if cname == predicted_class else 0.0) for cname in self.target_classes}
-            confidence = 1.0
+            raw_confidence = 1.0
+
+        total_pkts = len(flow.packets)
+        eff_class, eff_conf, policy_reason = apply_unknown_inference_policy(
+            predicted_class=predicted_class,
+            confidence=raw_confidence,
+            packet_count=total_pkts
+        )
+
+        behavioral_class = map_legacy_class_to_behavioral(eff_class)
 
         evidence = {
             "flow_duration_seconds": feat_dict.get("flow_duration_seconds"),
-            "total_packets": feat_dict.get("total_packets"),
+            "total_packets": total_pkts,
             "total_bytes": feat_dict.get("total_bytes"),
             "pkt_len_mean": feat_dict.get("pkt_len_mean"),
             "packets_per_second": feat_dict.get("packets_per_second"),
             "bytes_per_second": feat_dict.get("bytes_per_second"),
-            "model_used": self.selected_model_name
+            "model_used": self.selected_model_name,
+            "raw_predicted_class": predicted_class,
+            "policy_reason": policy_reason
         }
 
         return {
             "inferred_ml_classification": {
-                "predicted_class": predicted_class,
-                "confidence": confidence,
+                "predicted_class": eff_class,
+                "behavioral_class": behavioral_class,
+                "confidence": eff_conf,
+                "raw_confidence": raw_confidence,
                 "class_probabilities": prob_dict,
                 "evidence": evidence,
                 "status": "INFERRED",
@@ -340,6 +360,51 @@ def classify_pcap_for_integration(pcap_path: Union[str, Path]) -> TrafficClassif
             flow_count=0,
             reason=f"ML inference failure: {str(e)}"
         )
+
+
+def evaluate_real_ipsec_ground_truth(
+    model_path: Optional[Path] = None,
+    preprocessor_path: Optional[Path] = None
+) -> Dict[str, Any]:
+    """
+    Phase 11.3 / 11.4 Real IPsec Ground Truth Evaluation Entry Point.
+    Evaluates real IPsec PCAPs against the REAL_IPSEC_GROUND_TRUTH_REGISTRY.
+    Supports candidate model evaluation without modifying production artifacts.
+    """
+    if model_path and preprocessor_path:
+        classifier = TrafficClassifierInference(model_path=model_path, preprocessor_path=preprocessor_path)
+    else:
+        classifier = TrafficClassifierInference()
+    results = {}
+
+    for fname, meta in REAL_IPSEC_GROUND_TRUTH_REGISTRY.items():
+        pcap_path = PROJECT_ROOT / "data" / "pcaps" / "real" / fname
+        if not pcap_path.exists():
+            results[fname] = {"status": "FILE_NOT_FOUND", "ground_truth": meta}
+            continue
+
+        res = classifier.predict_pcap_traffic(pcap_path)
+        dominant_legacy = res.get("dominant_inferred_class", "UNKNOWN")
+        dominant_behavioral = map_legacy_class_to_behavioral(dominant_legacy)
+        gt_class = meta.get("ground_truth_behavioral_class")
+        match = (dominant_behavioral == gt_class)
+
+        results[fname] = {
+            "pcap_file": fname,
+            "ground_truth_metadata": meta,
+            "inferred_dominant_legacy_class": dominant_legacy,
+            "inferred_dominant_behavioral_class": dominant_behavioral,
+            "ground_truth_behavioral_class": gt_class,
+            "is_exact_behavioral_match": match,
+            "flow_count": res.get("flows_count", 0),
+            "disclaimer": "Evaluated against ground truth registry established by StrongSwan testbed profiles"
+        }
+
+    return {
+        "evaluation_type": "REAL_IPSEC_GROUND_TRUTH_REGISTRY_EVALUATION",
+        "timestamp": datetime.datetime.now().isoformat(),
+        "registry_results": results
+    }
 
 
 if __name__ == "__main__":

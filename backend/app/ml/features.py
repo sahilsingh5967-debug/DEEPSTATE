@@ -11,6 +11,11 @@ import math
 from pathlib import Path
 from typing import Dict, Any, List
 from backend.app.ml.flow_extractor import Flow, FlowPacket
+from backend.app.ml.schema import (
+    map_legacy_class_to_behavioral,
+    SOURCE_SYNTHETIC_DEVELOPMENT,
+    CLASS_UNKNOWN_UNCLASSIFIED
+)
 
 # Feature column names list (predictive ML vector ONLY - no labels/IPs)
 ML_FEATURE_COLUMNS = [
@@ -46,9 +51,12 @@ ML_FEATURE_COLUMNS = [
 
 METADATA_COLUMNS = [
     "dataset_id",
+    "dataset_source",
     "capture_id",
+    "session_id",
     "flow_id",
-    "traffic_class"
+    "traffic_class",
+    "behavioral_class"
 ]
 
 
@@ -89,7 +97,13 @@ def _calc_iats(packets: List[FlowPacket]) -> List[float]:
     return [max(0.0, sorted_times[i] - sorted_times[i - 1]) for i in range(1, len(sorted_times))]
 
 
-def extract_features_from_flow(flow: Flow, dataset_id: str = "ISCX-VPN2016") -> Dict[str, Any]:
+def extract_features_from_flow(
+    flow: Flow,
+    dataset_id: str = "ISCX-VPN2016",
+    dataset_source: str = SOURCE_SYNTHETIC_DEVELOPMENT,
+    session_id: str = None,
+    behavioral_class: str = None
+) -> Dict[str, Any]:
     """
     Extracts structured feature record for a single Flow.
     Returns dictionary with both metadata and predictive features.
@@ -134,12 +148,18 @@ def extract_features_from_flow(flow: Flow, dataset_id: str = "ISCX-VPN2016") -> 
     has_esp_flag = int(esp_count > 0)
     has_udp_4500_flag = int(flow.src_port == 4500 or flow.dst_port == 4500)
 
+    eff_session_id = session_id or flow.pcap_source or "UNKNOWN_SESSION"
+    eff_behavioral_class = behavioral_class or map_legacy_class_to_behavioral(flow.traffic_class)
+
     feature_dict = {
         # Metadata
         "dataset_id": dataset_id,
+        "dataset_source": dataset_source,
         "capture_id": flow.pcap_source,
+        "session_id": eff_session_id,
         "flow_id": flow.flow_id,
         "traffic_class": flow.traffic_class,
+        "behavioral_class": eff_behavioral_class,
 
         # Volumetric
         "flow_duration_seconds": round(duration, 6),
@@ -183,8 +203,23 @@ def extract_features_from_flow(flow: Flow, dataset_id: str = "ISCX-VPN2016") -> 
     return feature_dict
 
 
-def extract_features_from_flows(flows: List[Flow], dataset_id: str = "ISCX-VPN2016") -> List[Dict[str, Any]]:
-    return [extract_features_from_flow(f, dataset_id=dataset_id) for f in flows]
+def extract_features_from_flows(
+    flows: List[Flow],
+    dataset_id: str = "ISCX-VPN2016",
+    dataset_source: str = SOURCE_SYNTHETIC_DEVELOPMENT,
+    session_id: str = None,
+    behavioral_class: str = None
+) -> List[Dict[str, Any]]:
+    return [
+        extract_features_from_flow(
+            f,
+            dataset_id=dataset_id,
+            dataset_source=dataset_source,
+            session_id=session_id,
+            behavioral_class=behavioral_class
+        )
+        for f in flows
+    ]
 
 
 def generate_features_csv(input_dir: str, output_csv: str) -> str:

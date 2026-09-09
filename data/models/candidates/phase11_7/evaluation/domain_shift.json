@@ -1,0 +1,14 @@
+{
+  "synthetic_dataset_path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/datasets/features/iscx_vpn2016_features.csv",
+  "real_dataset_path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/datasets/real_ipsec/real_ipsec_features.csv",
+  "production_shift": {
+    "synthetic_macro_f1": 0.9584,
+    "real_test_macro_f1": 0.0747,
+    "macro_f1_shift_delta": 0.8837
+  },
+  "best_candidate_shift": {
+    "synthetic_macro_f1": 0.9472,
+    "real_test_macro_f1": 0.168,
+    "macro_f1_shift_delta": 0.7792
+  }
+}

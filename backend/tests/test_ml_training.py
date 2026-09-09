@@ -189,7 +189,7 @@ def test_18_pcap_inference_cli_pipeline():
     res = predict_pcap_traffic(str(real_pcap))
     assert res["status"] == "COMPLETED"
     assert "dominant_inferred_class" in res
-    assert res["dominant_inferred_class"] in TARGET_CLASSES
+    assert res["dominant_inferred_class"] in TARGET_CLASSES or res["dominant_inferred_class"] == "UNKNOWN_UNCLASSIFIED"
 
 
 def test_19_ood_results_structure_and_disclaimer():

@@ -57,11 +57,15 @@ s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 try:
     s.bind(('{dst_ip}', {target_port}))
     s.listen(1)
-    s.settimeout(5.0)
+    s.settimeout(15.0)
     conn, addr = s.accept()
-    conn.recv(4096)
+    conn.settimeout(15.0)
+    while True:
+        data = conn.recv(65536)
+        if not data:
+            break
     conn.close()
-except Exception:
+except Exception as e:
     pass
 finally:
     s.close()
@@ -138,4 +142,117 @@ def generate_live_traffic(
         packet_count=packet_count,
         duration=duration,
         port=port
+    )
+
+
+# --- Phase 11.5 Parameterized Behavioral Traffic Generators ---
+
+def generate_icmp_diagnostic(
+    src_ip: str,
+    dst_ip: str,
+    packet_count: int = 10,
+    payload_size: int = 64,
+    interval_seconds: float = 1.0,
+    burst_count: int = 1
+) -> Dict[str, Any]:
+    """Generates ICMP ping bursts with controlled payload size and interval."""
+    return generate_experiment_traffic(
+        src_ip=src_ip,
+        dst_ip=dst_ip,
+        traffic_type="ICMP",
+        packet_count=packet_count * burst_count,
+        duration=int(max(1, packet_count * interval_seconds * burst_count)),
+        payload_size=payload_size
+    )
+
+
+def generate_web_interactive(
+    src_ip: str,
+    dst_ip: str,
+    transaction_count: int = 5,
+    request_size: int = 250,
+    response_size: int = 1200,
+    inter_request_delay: float = 0.5,
+    server_port: int = 443
+) -> Dict[str, Any]:
+    """Generates application-like HTTP request/response exchange patterns."""
+    total_pkts = transaction_count * 4
+    total_duration = int(max(1, transaction_count * (0.1 + inter_request_delay)))
+    return generate_experiment_traffic(
+        src_ip=src_ip,
+        dst_ip=dst_ip,
+        traffic_type="WEB",
+        packet_count=total_pkts,
+        duration=total_duration,
+        port=server_port,
+        payload_size=request_size
+    )
+
+
+def generate_bulk_transfer(
+    src_ip: str,
+    dst_ip: str,
+    duration_seconds: int = 10,
+    chunk_size: int = 1420,
+    packet_rate: int = 100,
+    server_port: int = 5001
+) -> Dict[str, Any]:
+    """Generates sustained high-volume bulk transfer streams."""
+    total_pkts = duration_seconds * packet_rate
+    return generate_experiment_traffic(
+        src_ip=src_ip,
+        dst_ip=dst_ip,
+        traffic_type="FILE-TRANSFER-LIKE",
+        packet_count=total_pkts,
+        duration=duration_seconds,
+        port=server_port,
+        payload_size=chunk_size,
+        packet_rate=packet_rate
+    )
+
+
+def generate_streaming_media(
+    src_ip: str,
+    dst_ip: str,
+    duration_seconds: int = 10,
+    burst_duration: float = 1.0,
+    idle_duration: float = 0.5,
+    avg_packet_size: int = 1200,
+    server_port: int = 8080
+) -> Dict[str, Any]:
+    """Generates variable-rate streaming traffic exhibiting burst/idle timing."""
+    active_ratio = burst_duration / (burst_duration + idle_duration)
+    packet_rate = int(50 * active_ratio)
+    total_pkts = int(duration_seconds * packet_rate)
+    return generate_experiment_traffic(
+        src_ip=src_ip,
+        dst_ip=dst_ip,
+        traffic_type="TCP",
+        packet_count=total_pkts,
+        duration=duration_seconds,
+        port=server_port,
+        payload_size=avg_packet_size
+    )
+
+
+def generate_voip_audio(
+    src_ip: str,
+    dst_ip: str,
+    duration_seconds: int = 10,
+    packetization_interval_ms: int = 20,
+    frame_size: int = 160,
+    server_port: int = 5060
+) -> Dict[str, Any]:
+    """Generates small periodic audio frame datagrams (default 20ms interval)."""
+    pkts_per_sec = int(1000 / max(1, packetization_interval_ms))
+    total_pkts = duration_seconds * pkts_per_sec
+    return generate_experiment_traffic(
+        src_ip=src_ip,
+        dst_ip=dst_ip,
+        traffic_type="VOIP-LIKE",
+        packet_count=total_pkts,
+        duration=duration_seconds,
+        port=server_port,
+        payload_size=frame_size,
+        packet_rate=pkts_per_sec
     )

@@ -1,0 +1,394 @@
+{
+  "TEST-001.pcap": {
+    "production": {
+      "pcap": "TEST-001.pcap",
+      "flow_count": 4,
+      "flow_predictions": [
+        {
+          "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+          "raw_prediction": "ICMP_DIAGNOSTIC",
+          "effective_class": "UNKNOWN_UNCLASSIFIED",
+          "confidence": 0.44,
+          "packet_count": 2
+        },
+        {
+          "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+          "raw_prediction": "ICMP_DIAGNOSTIC",
+          "effective_class": "UNKNOWN_UNCLASSIFIED",
+          "confidence": 0.61,
+          "packet_count": 2
+        },
+        {
+          "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+          "raw_prediction": "VOIP_AUDIO",
+          "effective_class": "VOIP_AUDIO",
+          "confidence": 0.98,
+          "packet_count": 10
+        },
+        {
+          "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+          "raw_prediction": "VOIP_AUDIO",
+          "effective_class": "VOIP_AUDIO",
+          "confidence": 0.65,
+          "packet_count": 5
+        }
+      ]
+    },
+    "candidates": {
+      "RandomForestClassifier": {
+        "pcap": "TEST-001.pcap",
+        "flow_count": 4,
+        "flow_predictions": [
+          {
+            "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+            "raw_prediction": "UNKNOWN_UNCLASSIFIED",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 0.32,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+            "raw_prediction": "ICMP_DIAGNOSTIC",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 0.44,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "VOIP_AUDIO",
+            "confidence": 0.83,
+            "packet_count": 10
+          },
+          {
+            "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+            "raw_prediction": "ICMP_DIAGNOSTIC",
+            "effective_class": "ICMP_DIAGNOSTIC",
+            "confidence": 0.5,
+            "packet_count": 5
+          }
+        ]
+      },
+      "HistGradientBoostingClassifier": {
+        "pcap": "TEST-001.pcap",
+        "flow_count": 4,
+        "flow_predictions": [
+          {
+            "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+            "raw_prediction": "STREAMING_MEDIA",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 0.987,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 0.695,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "VOIP_AUDIO",
+            "confidence": 0.9985,
+            "packet_count": 10
+          },
+          {
+            "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "VOIP_AUDIO",
+            "confidence": 1.0,
+            "packet_count": 5
+          }
+        ]
+      },
+      "LogisticRegression": {
+        "pcap": "TEST-001.pcap",
+        "flow_count": 4,
+        "flow_predictions": [
+          {
+            "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+            "raw_prediction": "BULK_TRANSFER",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 1.0,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+            "raw_prediction": "ICMP_DIAGNOSTIC",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 1.0,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "VOIP_AUDIO",
+            "confidence": 1.0,
+            "packet_count": 10
+          },
+          {
+            "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "VOIP_AUDIO",
+            "confidence": 1.0,
+            "packet_count": 5
+          }
+        ]
+      }
+    }
+  },
+  "TEST-002.pcap": {
+    "production": {
+      "pcap": "TEST-002.pcap",
+      "flow_count": 4,
+      "flow_predictions": [
+        {
+          "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+          "raw_prediction": "ICMP_DIAGNOSTIC",
+          "effective_class": "UNKNOWN_UNCLASSIFIED",
+          "confidence": 0.75,
+          "packet_count": 2
+        },
+        {
+          "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+          "raw_prediction": "ICMP_DIAGNOSTIC",
+          "effective_class": "UNKNOWN_UNCLASSIFIED",
+          "confidence": 0.74,
+          "packet_count": 2
+        },
+        {
+          "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+          "raw_prediction": "VOIP_AUDIO",
+          "effective_class": "VOIP_AUDIO",
+          "confidence": 0.98,
+          "packet_count": 8
+        },
+        {
+          "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+          "raw_prediction": "VOIP_AUDIO",
+          "effective_class": "VOIP_AUDIO",
+          "confidence": 0.65,
+          "packet_count": 4
+        }
+      ]
+    },
+    "candidates": {
+      "RandomForestClassifier": {
+        "pcap": "TEST-002.pcap",
+        "flow_count": 4,
+        "flow_predictions": [
+          {
+            "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+            "raw_prediction": "ICMP_DIAGNOSTIC",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 0.48,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+            "raw_prediction": "ICMP_DIAGNOSTIC",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 0.44,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "VOIP_AUDIO",
+            "confidence": 0.83,
+            "packet_count": 8
+          },
+          {
+            "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+            "raw_prediction": "ICMP_DIAGNOSTIC",
+            "effective_class": "ICMP_DIAGNOSTIC",
+            "confidence": 0.5,
+            "packet_count": 4
+          }
+        ]
+      },
+      "HistGradientBoostingClassifier": {
+        "pcap": "TEST-002.pcap",
+        "flow_count": 4,
+        "flow_predictions": [
+          {
+            "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 0.6949,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 0.6911,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "VOIP_AUDIO",
+            "confidence": 0.9986,
+            "packet_count": 8
+          },
+          {
+            "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "VOIP_AUDIO",
+            "confidence": 1.0,
+            "packet_count": 4
+          }
+        ]
+      },
+      "LogisticRegression": {
+        "pcap": "TEST-002.pcap",
+        "flow_count": 4,
+        "flow_predictions": [
+          {
+            "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+            "raw_prediction": "ICMP_DIAGNOSTIC",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 1.0,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+            "raw_prediction": "ICMP_DIAGNOSTIC",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 1.0,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "VOIP_AUDIO",
+            "confidence": 1.0,
+            "packet_count": 8
+          },
+          {
+            "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "VOIP_AUDIO",
+            "confidence": 1.0,
+            "packet_count": 4
+          }
+        ]
+      }
+    }
+  },
+  "TEST-003.pcap": {
+    "production": {
+      "pcap": "TEST-003.pcap",
+      "flow_count": 3,
+      "flow_predictions": [
+        {
+          "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+          "raw_prediction": "ICMP_DIAGNOSTIC",
+          "effective_class": "UNKNOWN_UNCLASSIFIED",
+          "confidence": 0.44,
+          "packet_count": 2
+        },
+        {
+          "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+          "raw_prediction": "ICMP_DIAGNOSTIC",
+          "effective_class": "UNKNOWN_UNCLASSIFIED",
+          "confidence": 0.62,
+          "packet_count": 2
+        },
+        {
+          "flow_id": "1_192.168.100.2:0<->192.168.100.3:0",
+          "raw_prediction": "VOIP_AUDIO",
+          "effective_class": "VOIP_AUDIO",
+          "confidence": 0.96,
+          "packet_count": 8
+        }
+      ]
+    },
+    "candidates": {
+      "RandomForestClassifier": {
+        "pcap": "TEST-003.pcap",
+        "flow_count": 3,
+        "flow_predictions": [
+          {
+            "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+            "raw_prediction": "UNKNOWN_UNCLASSIFIED",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 0.32,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+            "raw_prediction": "ICMP_DIAGNOSTIC",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 0.44,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "1_192.168.100.2:0<->192.168.100.3:0",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "VOIP_AUDIO",
+            "confidence": 0.67,
+            "packet_count": 8
+          }
+        ]
+      },
+      "HistGradientBoostingClassifier": {
+        "pcap": "TEST-003.pcap",
+        "flow_count": 3,
+        "flow_predictions": [
+          {
+            "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+            "raw_prediction": "STREAMING_MEDIA",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 0.987,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 0.6959,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "1_192.168.100.2:0<->192.168.100.3:0",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "VOIP_AUDIO",
+            "confidence": 1.0,
+            "packet_count": 8
+          }
+        ]
+      },
+      "LogisticRegression": {
+        "pcap": "TEST-003.pcap",
+        "flow_count": 3,
+        "flow_predictions": [
+          {
+            "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+            "raw_prediction": "BULK_TRANSFER",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 1.0,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+            "raw_prediction": "ICMP_DIAGNOSTIC",
+            "effective_class": "UNKNOWN_UNCLASSIFIED",
+            "confidence": 1.0,
+            "packet_count": 2
+          },
+          {
+            "flow_id": "1_192.168.100.2:0<->192.168.100.3:0",
+            "raw_prediction": "VOIP_AUDIO",
+            "effective_class": "VOIP_AUDIO",
+            "confidence": 1.0,
+            "packet_count": 8
+          }
+        ]
+      }
+    }
+  }
+}

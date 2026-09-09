@@ -1,0 +1,27 @@
+{
+  "TEST-001": {
+    "record_count": 51,
+    "production_macro_f1": 0.0893,
+    "best_candidate_macro_f1": 0.1763
+  },
+  "TEST-002": {
+    "record_count": 51,
+    "production_macro_f1": 0.0893,
+    "best_candidate_macro_f1": 0.1389
+  },
+  "TEST-003": {
+    "record_count": 30,
+    "production_macro_f1": 0.037,
+    "best_candidate_macro_f1": 0.1481
+  },
+  "TEST-004": {
+    "record_count": 30,
+    "production_macro_f1": 0.037,
+    "best_candidate_macro_f1": 0.1481
+  },
+  "TEST-005": {
+    "record_count": 36,
+    "production_macro_f1": 0.0847,
+    "best_candidate_macro_f1": 0.0952
+  }
+}

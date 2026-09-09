@@ -1,0 +1,7 @@
+{
+  "random_seed": 42,
+  "session_split_deterministic": true,
+  "best_candidate": "HistGradientBoostingClassifier",
+  "train_val_f1_gap": -0.0029,
+  "val_test_f1_gap": -0.0087
+}

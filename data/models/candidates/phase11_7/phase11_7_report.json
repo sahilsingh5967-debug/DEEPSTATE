@@ -1,0 +1,1515 @@
+{
+  "phase": "11.7",
+  "timestamp": "2026-09-10T00:08:27.065225",
+  "dataset_id": "REAL-IPSEC-v1",
+  "dataset_session_count": 198,
+  "dataset_flow_count": 198,
+  "production_sentinels": {
+    "production_model": {
+      "path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/models/final_model.pkl",
+      "expected_sha256": "e67d90ad7317e0793a95764b83c314ebec07a1861855478084028682258e74e4",
+      "actual_sha256": "e67d90ad7317e0793a95764b83c314ebec07a1861855478084028682258e74e4",
+      "status": "MATCH"
+    },
+    "production_preprocessor": {
+      "path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/models/preprocessor.pkl",
+      "expected_sha256": "f66f06e21cdd20af7d42ab05175c94cef902e133a976ea98aa6ddb0f283c42a2",
+      "actual_sha256": "f66f06e21cdd20af7d42ab05175c94cef902e133a976ea98aa6ddb0f283c42a2",
+      "status": "MATCH"
+    },
+    "ood_benchmarks": {
+      "TEST-001.pcap": {
+        "path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/pcaps/real/TEST-001.pcap",
+        "expected_sha256": "e14c3f5f7e56284218ecddd4e7b6e4119a12588559262451d4bc577b074fd813",
+        "actual_sha256": "e14c3f5f7e56284218ecddd4e7b6e4119a12588559262451d4bc577b074fd813",
+        "status": "MATCH"
+      },
+      "TEST-002.pcap": {
+        "path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/pcaps/real/TEST-002.pcap",
+        "expected_sha256": "cd4b28e09d007422c899f955a04c285671e06f6a2b4bca3ca25ae7d5cc8ef78c",
+        "actual_sha256": "cd4b28e09d007422c899f955a04c285671e06f6a2b4bca3ca25ae7d5cc8ef78c",
+        "status": "MATCH"
+      },
+      "TEST-003.pcap": {
+        "path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/pcaps/real/TEST-003.pcap",
+        "expected_sha256": "719d15cfc3cf2cd3d50ab6a7e961cd92ead2cea62611b1446d34a78d22eff229",
+        "actual_sha256": "719d15cfc3cf2cd3d50ab6a7e961cd92ead2cea62611b1446d34a78d22eff229",
+        "status": "MATCH"
+      }
+    },
+    "all_sentinels_intact": true
+  },
+  "production_baseline": {
+    "val_metrics": {
+      "accuracy": 0.0417,
+      "balanced_accuracy": 0.1,
+      "macro_f1": 0.0185,
+      "weighted_f1": 0.0093,
+      "per_class_metrics": {
+        "ICMP_DIAGNOSTIC": {
+          "precision": 0.0625,
+          "recall": 0.5,
+          "f1_score": 0.1111,
+          "support": 2
+        },
+        "WEB_INTERACTIVE": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0,
+          "support": 9
+        },
+        "BULK_TRANSFER": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0,
+          "support": 7
+        },
+        "STREAMING_MEDIA": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0,
+          "support": 4
+        },
+        "VOIP_AUDIO": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0,
+          "support": 2
+        }
+      },
+      "confusion_matrix": [
+        [
+          1,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          7,
+          0,
+          0,
+          0,
+          2
+        ],
+        [
+          4,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "classes": [
+        "ICMP_DIAGNOSTIC",
+        "WEB_INTERACTIVE",
+        "BULK_TRANSFER",
+        "STREAMING_MEDIA",
+        "VOIP_AUDIO"
+      ]
+    },
+    "test_metrics": {
+      "accuracy": 0.1765,
+      "balanced_accuracy": 0.1333,
+      "macro_f1": 0.0747,
+      "weighted_f1": 0.1137,
+      "per_class_metrics": {
+        "ICMP_DIAGNOSTIC": {
+          "precision": 0.2083,
+          "recall": 0.5,
+          "f1_score": 0.2941,
+          "support": 10
+        },
+        "WEB_INTERACTIVE": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0,
+          "support": 11
+        },
+        "BULK_TRANSFER": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0,
+          "support": 5
+        },
+        "STREAMING_MEDIA": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0,
+          "support": 2
+        },
+        "VOIP_AUDIO": {
+          "precision": 0.1429,
+          "recall": 0.1667,
+          "f1_score": 0.1538,
+          "support": 6
+        }
+      },
+      "confusion_matrix": [
+        [
+          5,
+          0,
+          0,
+          0,
+          5
+        ],
+        [
+          10,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          3,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          5,
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "classes": [
+        "ICMP_DIAGNOSTIC",
+        "WEB_INTERACTIVE",
+        "BULK_TRANSFER",
+        "STREAMING_MEDIA",
+        "VOIP_AUDIO"
+      ]
+    }
+  },
+  "candidates": {
+    "RandomForestClassifier": {
+      "artifact_path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/models/candidates/candidate_randomforestclassifier.pkl",
+      "model_type": "RandomForestClassifier",
+      "train_metrics": {
+        "accuracy": 0.2071,
+        "balanced_accuracy": 0.1679,
+        "macro_f1": 0.1222,
+        "weighted_f1": 0.1843,
+        "per_class_metrics": {
+          "ICMP_DIAGNOSTIC": {
+            "precision": 0.2464,
+            "recall": 0.5152,
+            "f1_score": 0.3333,
+            "support": 33
+          },
+          "WEB_INTERACTIVE": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 16
+          },
+          "BULK_TRANSFER": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 24
+          },
+          "STREAMING_MEDIA": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 30
+          },
+          "VOIP_AUDIO": {
+            "precision": 0.5217,
+            "recall": 0.3243,
+            "f1_score": 0.4,
+            "support": 37
+          }
+        },
+        "confusion_matrix": [
+          [
+            17,
+            0,
+            0,
+            0,
+            11
+          ],
+          [
+            14,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            8,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            12,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            18,
+            0,
+            0,
+            0,
+            12
+          ]
+        ],
+        "classes": [
+          "ICMP_DIAGNOSTIC",
+          "WEB_INTERACTIVE",
+          "BULK_TRANSFER",
+          "STREAMING_MEDIA",
+          "VOIP_AUDIO"
+        ]
+      },
+      "validation_metrics": {
+        "accuracy": 0.0,
+        "balanced_accuracy": 0.0,
+        "macro_f1": 0.0,
+        "weighted_f1": 0.0,
+        "per_class_metrics": {
+          "ICMP_DIAGNOSTIC": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 2
+          },
+          "WEB_INTERACTIVE": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 9
+          },
+          "BULK_TRANSFER": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 7
+          },
+          "STREAMING_MEDIA": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 4
+          },
+          "VOIP_AUDIO": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 2
+          }
+        },
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            3,
+            0,
+            0,
+            0,
+            2
+          ],
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "classes": [
+          "ICMP_DIAGNOSTIC",
+          "WEB_INTERACTIVE",
+          "BULK_TRANSFER",
+          "STREAMING_MEDIA",
+          "VOIP_AUDIO"
+        ]
+      },
+      "test_metrics": {
+        "accuracy": 0.1176,
+        "balanced_accuracy": 0.0933,
+        "macro_f1": 0.0662,
+        "weighted_f1": 0.0973,
+        "per_class_metrics": {
+          "ICMP_DIAGNOSTIC": {
+            "precision": 0.1875,
+            "recall": 0.3,
+            "f1_score": 0.2308,
+            "support": 10
+          },
+          "WEB_INTERACTIVE": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 11
+          },
+          "BULK_TRANSFER": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 5
+          },
+          "STREAMING_MEDIA": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 2
+          },
+          "VOIP_AUDIO": {
+            "precision": 0.1667,
+            "recall": 0.1667,
+            "f1_score": 0.1667,
+            "support": 6
+          }
+        },
+        "confusion_matrix": [
+          [
+            3,
+            0,
+            0,
+            0,
+            4
+          ],
+          [
+            7,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            4,
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "classes": [
+          "ICMP_DIAGNOSTIC",
+          "WEB_INTERACTIVE",
+          "BULK_TRANSFER",
+          "STREAMING_MEDIA",
+          "VOIP_AUDIO"
+        ]
+      },
+      "deltas_vs_production": {
+        "val_macro_f1_delta": -0.0185,
+        "test_macro_f1_delta": -0.0085,
+        "val_balanced_acc_delta": -0.1,
+        "test_balanced_acc_delta": -0.04
+      }
+    },
+    "HistGradientBoostingClassifier": {
+      "artifact_path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/models/candidates/candidate_histgradientboostingclassifier.pkl",
+      "model_type": "HistGradientBoostingClassifier",
+      "train_metrics": {
+        "accuracy": 0.2214,
+        "balanced_accuracy": 0.1931,
+        "macro_f1": 0.1564,
+        "weighted_f1": 0.1977,
+        "per_class_metrics": {
+          "ICMP_DIAGNOSTIC": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 33
+          },
+          "WEB_INTERACTIVE": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 16
+          },
+          "BULK_TRANSFER": {
+            "precision": 1.0,
+            "recall": 0.2917,
+            "f1_score": 0.4516,
+            "support": 24
+          },
+          "STREAMING_MEDIA": {
+            "precision": 0.2222,
+            "recall": 0.1333,
+            "f1_score": 0.1667,
+            "support": 30
+          },
+          "VOIP_AUDIO": {
+            "precision": 0.2273,
+            "recall": 0.5405,
+            "f1_score": 0.32,
+            "support": 37
+          }
+        },
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            0,
+            4,
+            29
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            16
+          ],
+          [
+            0,
+            0,
+            7,
+            5,
+            9
+          ],
+          [
+            0,
+            0,
+            0,
+            4,
+            14
+          ],
+          [
+            0,
+            0,
+            0,
+            5,
+            20
+          ]
+        ],
+        "classes": [
+          "ICMP_DIAGNOSTIC",
+          "WEB_INTERACTIVE",
+          "BULK_TRANSFER",
+          "STREAMING_MEDIA",
+          "VOIP_AUDIO"
+        ]
+      },
+      "validation_metrics": {
+        "accuracy": 0.2083,
+        "balanced_accuracy": 0.2357,
+        "macro_f1": 0.1593,
+        "weighted_f1": 0.2231,
+        "per_class_metrics": {
+          "ICMP_DIAGNOSTIC": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 2
+          },
+          "WEB_INTERACTIVE": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 9
+          },
+          "BULK_TRANSFER": {
+            "precision": 1.0,
+            "recall": 0.4286,
+            "f1_score": 0.6,
+            "support": 7
+          },
+          "STREAMING_MEDIA": {
+            "precision": 0.2,
+            "recall": 0.25,
+            "f1_score": 0.2222,
+            "support": 4
+          },
+          "VOIP_AUDIO": {
+            "precision": 0.0769,
+            "recall": 0.5,
+            "f1_score": 0.1333,
+            "support": 2
+          }
+        },
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            0,
+            0,
+            2
+          ],
+          [
+            0,
+            0,
+            0,
+            3,
+            6
+          ],
+          [
+            0,
+            0,
+            3,
+            1,
+            3
+          ],
+          [
+            0,
+            0,
+            0,
+            1,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "classes": [
+          "ICMP_DIAGNOSTIC",
+          "WEB_INTERACTIVE",
+          "BULK_TRANSFER",
+          "STREAMING_MEDIA",
+          "VOIP_AUDIO"
+        ]
+      },
+      "test_metrics": {
+        "accuracy": 0.1765,
+        "balanced_accuracy": 0.28,
+        "macro_f1": 0.168,
+        "weighted_f1": 0.1349,
+        "per_class_metrics": {
+          "ICMP_DIAGNOSTIC": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 10
+          },
+          "WEB_INTERACTIVE": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 11
+          },
+          "BULK_TRANSFER": {
+            "precision": 1.0,
+            "recall": 0.4,
+            "f1_score": 0.5714,
+            "support": 5
+          },
+          "STREAMING_MEDIA": {
+            "precision": 0.1429,
+            "recall": 0.5,
+            "f1_score": 0.2222,
+            "support": 2
+          },
+          "VOIP_AUDIO": {
+            "precision": 0.1364,
+            "recall": 0.5,
+            "f1_score": 0.2143,
+            "support": 6
+          }
+        },
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            0,
+            2,
+            8
+          ],
+          [
+            0,
+            0,
+            0,
+            3,
+            8
+          ],
+          [
+            0,
+            0,
+            2,
+            0,
+            3
+          ],
+          [
+            0,
+            0,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            1,
+            3
+          ]
+        ],
+        "classes": [
+          "ICMP_DIAGNOSTIC",
+          "WEB_INTERACTIVE",
+          "BULK_TRANSFER",
+          "STREAMING_MEDIA",
+          "VOIP_AUDIO"
+        ]
+      },
+      "deltas_vs_production": {
+        "val_macro_f1_delta": 0.1408,
+        "test_macro_f1_delta": 0.0933,
+        "val_balanced_acc_delta": 0.1357,
+        "test_balanced_acc_delta": 0.1467
+      }
+    },
+    "LogisticRegression": {
+      "artifact_path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/models/candidates/candidate_logisticregression.pkl",
+      "model_type": "LogisticRegression",
+      "train_metrics": {
+        "accuracy": 0.2571,
+        "balanced_accuracy": 0.2187,
+        "macro_f1": 0.1672,
+        "weighted_f1": 0.2363,
+        "per_class_metrics": {
+          "ICMP_DIAGNOSTIC": {
+            "precision": 0.1852,
+            "recall": 0.303,
+            "f1_score": 0.2299,
+            "support": 33
+          },
+          "WEB_INTERACTIVE": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 16
+          },
+          "BULK_TRANSFER": {
+            "precision": 0.2308,
+            "recall": 0.25,
+            "f1_score": 0.24,
+            "support": 24
+          },
+          "STREAMING_MEDIA": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 30
+          },
+          "VOIP_AUDIO": {
+            "precision": 0.5263,
+            "recall": 0.5405,
+            "f1_score": 0.5333,
+            "support": 37
+          }
+        },
+        "confusion_matrix": [
+          [
+            10,
+            0,
+            5,
+            0,
+            18
+          ],
+          [
+            14,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            8,
+            0,
+            6,
+            0,
+            0
+          ],
+          [
+            12,
+            0,
+            6,
+            0,
+            0
+          ],
+          [
+            10,
+            0,
+            7,
+            0,
+            20
+          ]
+        ],
+        "classes": [
+          "ICMP_DIAGNOSTIC",
+          "WEB_INTERACTIVE",
+          "BULK_TRANSFER",
+          "STREAMING_MEDIA",
+          "VOIP_AUDIO"
+        ]
+      },
+      "validation_metrics": {
+        "accuracy": 0.125,
+        "balanced_accuracy": 0.1571,
+        "macro_f1": 0.0948,
+        "weighted_f1": 0.0964,
+        "per_class_metrics": {
+          "ICMP_DIAGNOSTIC": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 2
+          },
+          "WEB_INTERACTIVE": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 9
+          },
+          "BULK_TRANSFER": {
+            "precision": 0.2,
+            "recall": 0.2857,
+            "f1_score": 0.2353,
+            "support": 7
+          },
+          "STREAMING_MEDIA": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 4
+          },
+          "VOIP_AUDIO": {
+            "precision": 0.25,
+            "recall": 0.5,
+            "f1_score": 0.3333,
+            "support": 2
+          }
+        },
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            1,
+            0,
+            1
+          ],
+          [
+            3,
+            0,
+            4,
+            0,
+            2
+          ],
+          [
+            2,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0,
+            1
+          ]
+        ],
+        "classes": [
+          "ICMP_DIAGNOSTIC",
+          "WEB_INTERACTIVE",
+          "BULK_TRANSFER",
+          "STREAMING_MEDIA",
+          "VOIP_AUDIO"
+        ]
+      },
+      "test_metrics": {
+        "accuracy": 0.1765,
+        "balanced_accuracy": 0.18,
+        "macro_f1": 0.1195,
+        "weighted_f1": 0.1427,
+        "per_class_metrics": {
+          "ICMP_DIAGNOSTIC": {
+            "precision": 0.1538,
+            "recall": 0.2,
+            "f1_score": 0.1739,
+            "support": 10
+          },
+          "WEB_INTERACTIVE": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 11
+          },
+          "BULK_TRANSFER": {
+            "precision": 0.1111,
+            "recall": 0.2,
+            "f1_score": 0.1429,
+            "support": 5
+          },
+          "STREAMING_MEDIA": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "support": 2
+          },
+          "VOIP_AUDIO": {
+            "precision": 0.3333,
+            "recall": 0.5,
+            "f1_score": 0.4,
+            "support": 6
+          }
+        },
+        "confusion_matrix": [
+          [
+            2,
+            0,
+            3,
+            0,
+            5
+          ],
+          [
+            7,
+            0,
+            3,
+            0,
+            1
+          ],
+          [
+            2,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            1,
+            0,
+            3
+          ]
+        ],
+        "classes": [
+          "ICMP_DIAGNOSTIC",
+          "WEB_INTERACTIVE",
+          "BULK_TRANSFER",
+          "STREAMING_MEDIA",
+          "VOIP_AUDIO"
+        ]
+      },
+      "deltas_vs_production": {
+        "val_macro_f1_delta": 0.0763,
+        "test_macro_f1_delta": 0.0448,
+        "val_balanced_acc_delta": 0.0571,
+        "test_balanced_acc_delta": 0.0467
+      }
+    }
+  },
+  "best_candidate": "HistGradientBoostingClassifier",
+  "promotion_gates": {
+    "Gate_1_Prod_Model_Integrity": {
+      "name": "Production Model Integrity",
+      "status": "PASS",
+      "evidence": {
+        "path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/models/final_model.pkl",
+        "expected_sha256": "e67d90ad7317e0793a95764b83c314ebec07a1861855478084028682258e74e4",
+        "actual_sha256": "e67d90ad7317e0793a95764b83c314ebec07a1861855478084028682258e74e4",
+        "status": "MATCH"
+      }
+    },
+    "Gate_2_Prod_Preprocessor_Integrity": {
+      "name": "Production Preprocessor Integrity",
+      "status": "PASS",
+      "evidence": {
+        "path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/models/preprocessor.pkl",
+        "expected_sha256": "f66f06e21cdd20af7d42ab05175c94cef902e133a976ea98aa6ddb0f283c42a2",
+        "actual_sha256": "f66f06e21cdd20af7d42ab05175c94cef902e133a976ea98aa6ddb0f283c42a2",
+        "status": "MATCH"
+      }
+    },
+    "Gate_3_OOD_Benchmark_Integrity": {
+      "name": "OOD Benchmark Integrity",
+      "status": "PASS",
+      "evidence": {
+        "TEST-001.pcap": {
+          "path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/pcaps/real/TEST-001.pcap",
+          "expected_sha256": "e14c3f5f7e56284218ecddd4e7b6e4119a12588559262451d4bc577b074fd813",
+          "actual_sha256": "e14c3f5f7e56284218ecddd4e7b6e4119a12588559262451d4bc577b074fd813",
+          "status": "MATCH"
+        },
+        "TEST-002.pcap": {
+          "path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/pcaps/real/TEST-002.pcap",
+          "expected_sha256": "cd4b28e09d007422c899f955a04c285671e06f6a2b4bca3ca25ae7d5cc8ef78c",
+          "actual_sha256": "cd4b28e09d007422c899f955a04c285671e06f6a2b4bca3ca25ae7d5cc8ef78c",
+          "status": "MATCH"
+        },
+        "TEST-003.pcap": {
+          "path": "/Users/shahilraj/.gemini/antigravity/scratch/ipsec-vpn-analyzer/data/pcaps/real/TEST-003.pcap",
+          "expected_sha256": "719d15cfc3cf2cd3d50ab6a7e961cd92ead2cea62611b1446d34a78d22eff229",
+          "actual_sha256": "719d15cfc3cf2cd3d50ab6a7e961cd92ead2cea62611b1446d34a78d22eff229",
+          "status": "MATCH"
+        }
+      }
+    },
+    "Gate_4_Dataset_Integrity": {
+      "name": "REAL-IPSEC-v1 Dataset Integrity",
+      "status": "PASS",
+      "evidence": {
+        "violations_count": 0,
+        "total_sessions": 198
+      }
+    },
+    "Gate_5_Session_Leakage": {
+      "name": "Session-Level Zero Leakage",
+      "status": "PASS",
+      "evidence": {
+        "train_val_overlap": 0,
+        "train_test_overlap": 0,
+        "val_test_overlap": 0
+      }
+    },
+    "Gate_6_Forbidden_Identifiers_Exclusion": {
+      "name": "Forbidden Identifier Exclusion",
+      "status": "PASS",
+      "evidence": {
+        "forbidden_columns_in_x": []
+      }
+    },
+    "Gate_7_Feature_Contract": {
+      "name": "28 Predictive Feature Schema Contract",
+      "status": "PASS",
+      "evidence": {
+        "feature_count": 28
+      }
+    },
+    "Gate_8_Ground_Truth_Independence": {
+      "name": "Pre-Capture Ground Truth Independence",
+      "status": "PASS",
+      "evidence": {
+        "ground_truth_method": "PRE_CAPTURE_EXPERIMENT_CONFIGURATION"
+      }
+    },
+    "Gate_9_Real_IPsec_Dataset_Readiness": {
+      "name": "Real-IPsec Dataset Readiness",
+      "status": "PASS",
+      "evidence": {
+        "dataset_status": "DATASET_READY",
+        "total_sessions": 198
+      }
+    },
+    "Gate_10_Candidate_Reproducibility": {
+      "name": "Deterministic Candidate Reproducibility",
+      "status": "PASS",
+      "evidence": {
+        "random_seed": 42,
+        "session_split_deterministic": true,
+        "best_candidate": "HistGradientBoostingClassifier",
+        "train_val_f1_gap": -0.0029,
+        "val_test_f1_gap": -0.0087
+      }
+    },
+    "Gate_11_Candidate_Performance_Improvement": {
+      "name": "Candidate Performance Improvement over Production",
+      "status": "PASS",
+      "evidence": {
+        "best_candidate": "HistGradientBoostingClassifier",
+        "candidate_test_macro_f1": 0.168,
+        "production_test_macro_f1": 0.0747,
+        "delta": 0.0933
+      }
+    },
+    "Gate_12_Per_Class_Safety": {
+      "name": "Per-Class Safety (No Severe Regression)",
+      "status": "FAIL",
+      "evidence": {
+        "severe_regressions": [
+          {
+            "class": "ICMP_DIAGNOSTIC",
+            "prod_f1": 0.2941,
+            "cand_f1": 0.0
+          }
+        ]
+      }
+    },
+    "Gate_13_OOD_Generalization_Safety": {
+      "name": "OOD Generalization Safety",
+      "status": "PASS",
+      "evidence": {
+        "TEST-001.pcap": {
+          "production": {
+            "pcap": "TEST-001.pcap",
+            "flow_count": 4,
+            "flow_predictions": [
+              {
+                "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+                "raw_prediction": "ICMP_DIAGNOSTIC",
+                "effective_class": "UNKNOWN_UNCLASSIFIED",
+                "confidence": 0.44,
+                "packet_count": 2
+              },
+              {
+                "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+                "raw_prediction": "ICMP_DIAGNOSTIC",
+                "effective_class": "UNKNOWN_UNCLASSIFIED",
+                "confidence": 0.61,
+                "packet_count": 2
+              },
+              {
+                "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+                "raw_prediction": "VOIP_AUDIO",
+                "effective_class": "VOIP_AUDIO",
+                "confidence": 0.98,
+                "packet_count": 10
+              },
+              {
+                "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+                "raw_prediction": "VOIP_AUDIO",
+                "effective_class": "VOIP_AUDIO",
+                "confidence": 0.65,
+                "packet_count": 5
+              }
+            ]
+          },
+          "candidates": {
+            "RandomForestClassifier": {
+              "pcap": "TEST-001.pcap",
+              "flow_count": 4,
+              "flow_predictions": [
+                {
+                  "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+                  "raw_prediction": "UNKNOWN_UNCLASSIFIED",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 0.32,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+                  "raw_prediction": "ICMP_DIAGNOSTIC",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 0.44,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "VOIP_AUDIO",
+                  "confidence": 0.83,
+                  "packet_count": 10
+                },
+                {
+                  "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+                  "raw_prediction": "ICMP_DIAGNOSTIC",
+                  "effective_class": "ICMP_DIAGNOSTIC",
+                  "confidence": 0.5,
+                  "packet_count": 5
+                }
+              ]
+            },
+            "HistGradientBoostingClassifier": {
+              "pcap": "TEST-001.pcap",
+              "flow_count": 4,
+              "flow_predictions": [
+                {
+                  "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+                  "raw_prediction": "STREAMING_MEDIA",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 0.987,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 0.695,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "VOIP_AUDIO",
+                  "confidence": 0.9985,
+                  "packet_count": 10
+                },
+                {
+                  "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "VOIP_AUDIO",
+                  "confidence": 1.0,
+                  "packet_count": 5
+                }
+              ]
+            },
+            "LogisticRegression": {
+              "pcap": "TEST-001.pcap",
+              "flow_count": 4,
+              "flow_predictions": [
+                {
+                  "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+                  "raw_prediction": "BULK_TRANSFER",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 1.0,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+                  "raw_prediction": "ICMP_DIAGNOSTIC",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 1.0,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "VOIP_AUDIO",
+                  "confidence": 1.0,
+                  "packet_count": 10
+                },
+                {
+                  "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "VOIP_AUDIO",
+                  "confidence": 1.0,
+                  "packet_count": 5
+                }
+              ]
+            }
+          }
+        },
+        "TEST-002.pcap": {
+          "production": {
+            "pcap": "TEST-002.pcap",
+            "flow_count": 4,
+            "flow_predictions": [
+              {
+                "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+                "raw_prediction": "ICMP_DIAGNOSTIC",
+                "effective_class": "UNKNOWN_UNCLASSIFIED",
+                "confidence": 0.75,
+                "packet_count": 2
+              },
+              {
+                "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+                "raw_prediction": "ICMP_DIAGNOSTIC",
+                "effective_class": "UNKNOWN_UNCLASSIFIED",
+                "confidence": 0.74,
+                "packet_count": 2
+              },
+              {
+                "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+                "raw_prediction": "VOIP_AUDIO",
+                "effective_class": "VOIP_AUDIO",
+                "confidence": 0.98,
+                "packet_count": 8
+              },
+              {
+                "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+                "raw_prediction": "VOIP_AUDIO",
+                "effective_class": "VOIP_AUDIO",
+                "confidence": 0.65,
+                "packet_count": 4
+              }
+            ]
+          },
+          "candidates": {
+            "RandomForestClassifier": {
+              "pcap": "TEST-002.pcap",
+              "flow_count": 4,
+              "flow_predictions": [
+                {
+                  "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+                  "raw_prediction": "ICMP_DIAGNOSTIC",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 0.48,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+                  "raw_prediction": "ICMP_DIAGNOSTIC",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 0.44,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "VOIP_AUDIO",
+                  "confidence": 0.83,
+                  "packet_count": 8
+                },
+                {
+                  "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+                  "raw_prediction": "ICMP_DIAGNOSTIC",
+                  "effective_class": "ICMP_DIAGNOSTIC",
+                  "confidence": 0.5,
+                  "packet_count": 4
+                }
+              ]
+            },
+            "HistGradientBoostingClassifier": {
+              "pcap": "TEST-002.pcap",
+              "flow_count": 4,
+              "flow_predictions": [
+                {
+                  "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 0.6949,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 0.6911,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "VOIP_AUDIO",
+                  "confidence": 0.9986,
+                  "packet_count": 8
+                },
+                {
+                  "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "VOIP_AUDIO",
+                  "confidence": 1.0,
+                  "packet_count": 4
+                }
+              ]
+            },
+            "LogisticRegression": {
+              "pcap": "TEST-002.pcap",
+              "flow_count": 4,
+              "flow_predictions": [
+                {
+                  "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+                  "raw_prediction": "ICMP_DIAGNOSTIC",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 1.0,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+                  "raw_prediction": "ICMP_DIAGNOSTIC",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 1.0,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "VOIP_AUDIO",
+                  "confidence": 1.0,
+                  "packet_count": 8
+                },
+                {
+                  "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "VOIP_AUDIO",
+                  "confidence": 1.0,
+                  "packet_count": 4
+                }
+              ]
+            }
+          }
+        },
+        "TEST-003.pcap": {
+          "production": {
+            "pcap": "TEST-003.pcap",
+            "flow_count": 3,
+            "flow_predictions": [
+              {
+                "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+                "raw_prediction": "ICMP_DIAGNOSTIC",
+                "effective_class": "UNKNOWN_UNCLASSIFIED",
+                "confidence": 0.44,
+                "packet_count": 2
+              },
+              {
+                "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+                "raw_prediction": "ICMP_DIAGNOSTIC",
+                "effective_class": "UNKNOWN_UNCLASSIFIED",
+                "confidence": 0.62,
+                "packet_count": 2
+              },
+              {
+                "flow_id": "1_192.168.100.2:0<->192.168.100.3:0",
+                "raw_prediction": "VOIP_AUDIO",
+                "effective_class": "VOIP_AUDIO",
+                "confidence": 0.96,
+                "packet_count": 8
+              }
+            ]
+          },
+          "candidates": {
+            "RandomForestClassifier": {
+              "pcap": "TEST-003.pcap",
+              "flow_count": 3,
+              "flow_predictions": [
+                {
+                  "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+                  "raw_prediction": "UNKNOWN_UNCLASSIFIED",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 0.32,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+                  "raw_prediction": "ICMP_DIAGNOSTIC",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 0.44,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "1_192.168.100.2:0<->192.168.100.3:0",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "VOIP_AUDIO",
+                  "confidence": 0.67,
+                  "packet_count": 8
+                }
+              ]
+            },
+            "HistGradientBoostingClassifier": {
+              "pcap": "TEST-003.pcap",
+              "flow_count": 3,
+              "flow_predictions": [
+                {
+                  "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+                  "raw_prediction": "STREAMING_MEDIA",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 0.987,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 0.6959,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "1_192.168.100.2:0<->192.168.100.3:0",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "VOIP_AUDIO",
+                  "confidence": 1.0,
+                  "packet_count": 8
+                }
+              ]
+            },
+            "LogisticRegression": {
+              "pcap": "TEST-003.pcap",
+              "flow_count": 3,
+              "flow_predictions": [
+                {
+                  "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+                  "raw_prediction": "BULK_TRANSFER",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 1.0,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+                  "raw_prediction": "ICMP_DIAGNOSTIC",
+                  "effective_class": "UNKNOWN_UNCLASSIFIED",
+                  "confidence": 1.0,
+                  "packet_count": 2
+                },
+                {
+                  "flow_id": "1_192.168.100.2:0<->192.168.100.3:0",
+                  "raw_prediction": "VOIP_AUDIO",
+                  "effective_class": "VOIP_AUDIO",
+                  "confidence": 1.0,
+                  "packet_count": 8
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "Gate_14_Production_Deployment_Safety": {
+      "name": "Production Deployment Safety (Isolated Package Only)",
+      "status": "PASS",
+      "evidence": {
+        "production_model_untouched": true,
+        "production_preprocessor_untouched": true,
+        "auto_overwrite_disabled": true
+      }
+    }
+  },
+  "gates_summary": "13/14 PASS",
+  "final_verdict": "PROMOTION_REJECTED",
+  "automatic_production_replacement": false
+}

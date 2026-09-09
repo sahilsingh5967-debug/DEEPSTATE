@@ -1,0 +1,82 @@
+{
+  "accuracy": 0.0417,
+  "balanced_accuracy": 0.1,
+  "macro_f1": 0.0185,
+  "weighted_f1": 0.0093,
+  "per_class_metrics": {
+    "ICMP_DIAGNOSTIC": {
+      "precision": 0.0625,
+      "recall": 0.5,
+      "f1_score": 0.1111,
+      "support": 2
+    },
+    "WEB_INTERACTIVE": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "support": 9
+    },
+    "BULK_TRANSFER": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "support": 7
+    },
+    "STREAMING_MEDIA": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "support": 4
+    },
+    "VOIP_AUDIO": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "support": 2
+    }
+  },
+  "confusion_matrix": [
+    [
+      1,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      7,
+      0,
+      0,
+      0,
+      2
+    ],
+    [
+      4,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      2,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      2,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "classes": [
+    "ICMP_DIAGNOSTIC",
+    "WEB_INTERACTIVE",
+    "BULK_TRANSFER",
+    "STREAMING_MEDIA",
+    "VOIP_AUDIO"
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-09-10T00:08:27.060194",
+  "dataset_id": "REAL-IPSEC-v1",
+  "total_sessions": 75,
+  "class_distribution": {
+    "ICMP_DIAGNOSTIC": 15,
+    "WEB_INTERACTIVE": 15,
+    "BULK_TRANSFER": 15,
+    "STREAMING_MEDIA": 15,
+    "VOIP_AUDIO": 15,
+    "UNKNOWN_UNCLASSIFIED": 0
+  },
+  "profile_distribution": {
+    "encryption": {
+      "AES-128-CBC": 45,
+      "AES-256-GCM": 30
+    },
+    "ipsec_mode": {
+      "tunnel": 45,
+      "transport": 30
+    },
+    "nat_traversal": {
+      "False": 45,
+      "True": 30
+    },
+    "encapsulation": {
+      "NATIVE_IPSEC_ESP": 45,
+      "IPSEC_NATT_UDP4500": 30
+    }
+  },
+  "integrity_violations_count": 0,
+  "integrity_violations": [],
+  "leakage_audit": {
+    "status": "PASSED",
+    "violations": []
+  },
+  "shortcut_warnings_count": 0,
+  "shortcut_warnings": [],
+  "contingency_matrix_class_vs_encryption": {
+    "ICMP_DIAGNOSTIC": {
+      "AES-128-CBC": 9,
+      "AES-256-GCM": 6
+    },
+    "WEB_INTERACTIVE": {
+      "AES-128-CBC": 9,
+      "AES-256-GCM": 6
+    },
+    "BULK_TRANSFER": {
+      "AES-128-CBC": 9,
+      "AES-256-GCM": 6
+    },
+    "STREAMING_MEDIA": {
+      "AES-128-CBC": 9,
+      "AES-256-GCM": 6
+    },
+    "VOIP_AUDIO": {
+      "AES-128-CBC": 9,
+      "AES-256-GCM": 6
+    }
+  }
+}
