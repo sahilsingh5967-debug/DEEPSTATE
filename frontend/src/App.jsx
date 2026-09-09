@@ -3,10 +3,12 @@ import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import PcapSelector from './components/PcapSelector';
 import UnifiedResults from './components/UnifiedResults';
+import DemonstrationLab from './components/DemonstrationLab';
 import { fetchBackendHealth, analyzePcap } from './api/client';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, ShieldCheck, FlaskConical } from 'lucide-react';
 
 export default function App() {
+  const [activeTab, setActiveTab] = useState('lab'); // Default to Demonstration Lab 2.0 for SIH presentation
   const [health, setHealth] = useState(null);
   const [loadingHealth, setLoadingHealth] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
@@ -38,6 +40,11 @@ export default function App() {
     }
   };
 
+  const handleLabAnalysisResult = (result) => {
+    setAnalysisResult(result);
+    setApiError('');
+  };
+
   const pipelineStatus = analyzing
     ? 'analyzing'
     : apiError
@@ -54,27 +61,67 @@ export default function App() {
         <Sidebar />
 
         <main style={{ flex: 1, padding: '28px', display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1400px' }}>
-          <div>
-            <h2 style={{ margin: '0 0 6px', fontSize: '22px', fontWeight: '700', color: '#f8fafc' }}>
-              DEEPSTATE — IPsec Security Intelligence Center
-            </h2>
-            <p style={{ margin: 0, fontSize: '14px', color: '#94a3b8' }}>
-              Unified PCAP Ingestion & Analysis Workflow integrating Deterministic Protocol Parsing (Phase 3), Security Policy Scoring (Phase 4), and Encrypted Traffic ML Inference (Phase 5).
-            </p>
+
+          {/* Top Mode Selector Tabs */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1e293b', paddingBottom: '16px' }}>
+            <div>
+              <h2 style={{ margin: '0 0 4px', fontSize: '22px', fontWeight: '700', color: '#f8fafc' }}>
+                DEEPSTATE — IPsec VPN Security Intelligence Center
+              </h2>
+              <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8' }}>
+                Deterministic Protocol Parsing (Tier A) • Policy Rule Scoring (Tier B) • Encrypted Traffic ML Inference (Tier C)
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', backgroundColor: '#0f172a', padding: '4px', borderRadius: '10px', border: '1px solid #1e293b' }}>
+              <button
+                type="button"
+                onClick={() => setActiveTab('lab')}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '8px',
+                  padding: '8px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: '700',
+                  cursor: 'pointer', border: 'none',
+                  backgroundColor: activeTab === 'lab' ? '#0284c7' : 'transparent',
+                  color: activeTab === 'lab' ? '#ffffff' : '#94a3b8'
+                }}
+              >
+                <FlaskConical style={{ width: '16px', height: '16px' }} />
+                <span>Demonstration Lab 2.0</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('soc')}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '8px',
+                  padding: '8px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: '700',
+                  cursor: 'pointer', border: 'none',
+                  backgroundColor: activeTab === 'soc' ? '#0284c7' : 'transparent',
+                  color: activeTab === 'soc' ? '#ffffff' : '#94a3b8'
+                }}
+              >
+                <ShieldCheck style={{ width: '16px', height: '16px' }} />
+                <span>Preset PCAP Ingestion</span>
+              </button>
+            </div>
           </div>
 
-          <PcapSelector onAnalyze={handleAnalyze} analyzing={analyzing} />
+          {/* Tab 1: Demonstration Lab 2.0 */}
+          {activeTab === 'lab' && (
+            <DemonstrationLab onAnalyzeResult={handleLabAnalysisResult} />
+          )}
 
+          {/* Tab 2: Classic Preset Ingestion */}
+          {activeTab === 'soc' && (
+            <PcapSelector onAnalyze={handleAnalyze} analyzing={analyzing} />
+          )}
+
+          {/* Failure Alert */}
           {apiError && (
             <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              padding: '16px',
-              backgroundColor: 'rgba(239, 68, 68, 0.1)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              borderRadius: '8px',
-              color: '#f87171'
+              display: 'flex', alignItems: 'center', gap: '10px', padding: '16px',
+              backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)',
+              borderRadius: '8px', color: '#f87171'
             }}>
               <AlertTriangle style={{ width: '20px', height: '20px', flexShrink: 0 }} />
               <div>
@@ -83,9 +130,25 @@ export default function App() {
             </div>
           )}
 
+          {/* Unified 3-Tier Results Display */}
           {analysisResult && (
-            <UnifiedResults result={analysisResult} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#0f172a', padding: '12px 18px', borderRadius: '8px', border: '1px solid #1e293b' }}>
+                <span style={{ fontSize: '14px', fontWeight: '700', color: '#38bdf8' }}>
+                  DEEPSTATE Unified Analysis Output (Session ID: {analysisResult.analysis_id})
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setAnalysisResult(null)}
+                  style={{ fontSize: '12px', color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer' }}
+                >
+                  Clear Results
+                </button>
+              </div>
+              <UnifiedResults result={analysisResult} />
+            </div>
           )}
+
         </main>
       </div>
     </div>

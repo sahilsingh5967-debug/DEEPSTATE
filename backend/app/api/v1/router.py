@@ -6,7 +6,10 @@ from backend.app.core.config import settings
 from backend.app.models.schemas import HealthResponse, AnalysisRequest, AnalysisResult
 from backend.app.analyzers.protocol_analyzer import analyze_pcap
 
+from backend.app.api.v1.testbed import router as testbed_router
+
 router = APIRouter()
+router.include_router(testbed_router, prefix="/testbed", tags=["Testbed"])
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 
@@ -50,6 +53,18 @@ def list_available_pcaps() -> List[Dict[str, Any]]:
                 "id": f.name,
                 "name": f"{f.name} (Synthetic Fixture)",
                 "category": "Synthetic Fixtures",
+                "file_path": str(f.relative_to(PROJECT_ROOT)),
+                "absolute_path": str(f),
+                "size_bytes": f.stat().st_size
+            })
+
+    gen_dir = PROJECT_ROOT / "data" / "pcaps" / "generated"
+    if gen_dir.exists():
+        for f in sorted(gen_dir.glob("*.pcap")):
+            pcaps.append({
+                "id": f.name,
+                "name": f"{f.name} (Demonstration Capture)",
+                "category": "Demonstration Captures",
                 "file_path": str(f.relative_to(PROJECT_ROOT)),
                 "absolute_path": str(f),
                 "size_bytes": f.stat().st_size

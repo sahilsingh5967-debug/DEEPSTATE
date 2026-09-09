@@ -12,7 +12,8 @@ import {
   Layers,
   FileCheck,
   ShieldAlert,
-  Radio
+  Radio,
+  Download
 } from 'lucide-react';
 import StatusCard from './StatusCard';
 
@@ -31,6 +32,19 @@ export default function UnifiedResults({ result }) {
     analysis_warnings,
     errors
   } = result;
+
+  const handleExportJson = () => {
+    const jsonStr = JSON.stringify(result, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.href = url;
+    downloadAnchor.download = `DEEPSTATE_Report_${analysis_id || 'result'}.json`;
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    URL.revokeObjectURL(url);
+  };
 
   const getRiskColor = (risk) => {
     switch (risk?.toUpperCase()) {
@@ -77,11 +91,33 @@ export default function UnifiedResults({ result }) {
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '16px', fontSize: '13px', color: '#cbd5e1' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '13px', color: '#cbd5e1' }}>
           <div>File: <strong style={{ color: '#f8fafc' }}>{pcap_metadata?.file_name || 'N/A'}</strong></div>
           <div>Packets: <strong style={{ color: '#f8fafc' }}>{pcap_metadata?.packet_count || 0}</strong></div>
           <div>Duration: <strong style={{ color: '#f8fafc' }}>{pcap_metadata?.duration_seconds ? `${pcap_metadata.duration_seconds}s` : 'N/A'}</strong></div>
           <div>Size: <strong style={{ color: '#f8fafc' }}>{pcap_metadata?.file_size_bytes ? `${pcap_metadata.file_size_bytes} B` : 'N/A'}</strong></div>
+
+          <button
+            type="button"
+            onClick={handleExportJson}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 12px',
+              borderRadius: '6px',
+              fontSize: '12px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              border: '1px solid rgba(56, 189, 248, 0.4)',
+              backgroundColor: 'rgba(56, 189, 248, 0.12)',
+              color: '#38bdf8',
+              transition: 'background-color 0.2s'
+            }}
+          >
+            <Download style={{ width: '14px', height: '14px' }} />
+            <span>Export Report (JSON)</span>
+          </button>
         </div>
       </div>
 
