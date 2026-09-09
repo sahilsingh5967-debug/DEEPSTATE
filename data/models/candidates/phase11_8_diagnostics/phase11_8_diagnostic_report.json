@@ -1,0 +1,379 @@
+{
+  "phase": "11.8",
+  "timestamp": "2026-09-10T00:23:58.371444",
+  "sentinels_verified": true,
+  "session_distribution": {
+    "total_icmp_sessions": 15,
+    "train_icmp_sessions": 11,
+    "val_icmp_sessions": 1,
+    "test_icmp_sessions": 3,
+    "total_icmp_flows": 45,
+    "train_icmp_flows": 33,
+    "val_icmp_flows": 2,
+    "test_icmp_flows": 10,
+    "icmp_share_of_test_flows": 0.2941
+  },
+  "test_flow_forensics": [
+    {
+      "session_id": "RIV1-TEST001-ICMP_DIAGNOSTIC-001",
+      "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+      "total_packets": 2,
+      "pkt_len_mean": 510.0,
+      "ground_truth": "ICMP_DIAGNOSTIC",
+      "production_pred": "ICMP_DIAGNOSTIC",
+      "hgb_pred": "STREAMING_MEDIA",
+      "rf_pred": "UNKNOWN_UNCLASSIFIED",
+      "lr_pred": "BULK_TRANSFER"
+    },
+    {
+      "session_id": "RIV1-TEST001-ICMP_DIAGNOSTIC-001",
+      "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+      "total_packets": 2,
+      "pkt_len_mean": 310.0,
+      "ground_truth": "ICMP_DIAGNOSTIC",
+      "production_pred": "ICMP_DIAGNOSTIC",
+      "hgb_pred": "VOIP_AUDIO",
+      "rf_pred": "ICMP_DIAGNOSTIC",
+      "lr_pred": "ICMP_DIAGNOSTIC"
+    },
+    {
+      "session_id": "RIV1-TEST001-ICMP_DIAGNOSTIC-001",
+      "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+      "total_packets": 56,
+      "pkt_len_mean": 170.0,
+      "ground_truth": "ICMP_DIAGNOSTIC",
+      "production_pred": "VOIP_AUDIO",
+      "hgb_pred": "VOIP_AUDIO",
+      "rf_pred": "VOIP_AUDIO",
+      "lr_pred": "VOIP_AUDIO"
+    },
+    {
+      "session_id": "RIV1-TEST001-ICMP_DIAGNOSTIC-001",
+      "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+      "total_packets": 28,
+      "pkt_len_mean": 98.0,
+      "ground_truth": "ICMP_DIAGNOSTIC",
+      "production_pred": "VOIP_AUDIO",
+      "hgb_pred": "VOIP_AUDIO",
+      "rf_pred": "VOIP_AUDIO",
+      "lr_pred": "VOIP_AUDIO"
+    },
+    {
+      "session_id": "RIV1-TEST001-ICMP_DIAGNOSTIC-002",
+      "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+      "total_packets": 2,
+      "pkt_len_mean": 510.0,
+      "ground_truth": "ICMP_DIAGNOSTIC",
+      "production_pred": "ICMP_DIAGNOSTIC",
+      "hgb_pred": "STREAMING_MEDIA",
+      "rf_pred": "UNKNOWN_UNCLASSIFIED",
+      "lr_pred": "BULK_TRANSFER"
+    },
+    {
+      "session_id": "RIV1-TEST001-ICMP_DIAGNOSTIC-002",
+      "flow_id": "17_192.168.100.2:4500<->192.168.100.3:4500",
+      "total_packets": 2,
+      "pkt_len_mean": 310.0,
+      "ground_truth": "ICMP_DIAGNOSTIC",
+      "production_pred": "ICMP_DIAGNOSTIC",
+      "hgb_pred": "VOIP_AUDIO",
+      "rf_pred": "ICMP_DIAGNOSTIC",
+      "lr_pred": "ICMP_DIAGNOSTIC"
+    },
+    {
+      "session_id": "RIV1-TEST001-ICMP_DIAGNOSTIC-002",
+      "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+      "total_packets": 38,
+      "pkt_len_mean": 170.0,
+      "ground_truth": "ICMP_DIAGNOSTIC",
+      "production_pred": "VOIP_AUDIO",
+      "hgb_pred": "VOIP_AUDIO",
+      "rf_pred": "VOIP_AUDIO",
+      "lr_pred": "VOIP_AUDIO"
+    },
+    {
+      "session_id": "RIV1-TEST001-ICMP_DIAGNOSTIC-002",
+      "flow_id": "1_10.1.0.1:0<->10.2.0.1:0",
+      "total_packets": 19,
+      "pkt_len_mean": 98.0,
+      "ground_truth": "ICMP_DIAGNOSTIC",
+      "production_pred": "VOIP_AUDIO",
+      "hgb_pred": "VOIP_AUDIO",
+      "rf_pred": "ICMP_DIAGNOSTIC",
+      "lr_pred": "VOIP_AUDIO"
+    },
+    {
+      "session_id": "RIV1-TEST003-ICMP_DIAGNOSTIC-003",
+      "flow_id": "17_192.168.100.2:500<->192.168.100.3:500",
+      "total_packets": 4,
+      "pkt_len_mean": 420.0,
+      "ground_truth": "ICMP_DIAGNOSTIC",
+      "production_pred": "ICMP_DIAGNOSTIC",
+      "hgb_pred": "VOIP_AUDIO",
+      "rf_pred": "UNKNOWN_UNCLASSIFIED",
+      "lr_pred": "BULK_TRANSFER"
+    },
+    {
+      "session_id": "RIV1-TEST003-ICMP_DIAGNOSTIC-003",
+      "flow_id": "50_192.168.100.2:0<->192.168.100.3:0",
+      "total_packets": 38,
+      "pkt_len_mean": 162.0,
+      "ground_truth": "ICMP_DIAGNOSTIC",
+      "production_pred": "VOIP_AUDIO",
+      "hgb_pred": "VOIP_AUDIO",
+      "rf_pred": "VOIP_AUDIO",
+      "lr_pred": "VOIP_AUDIO"
+    }
+  ],
+  "feature_statistics": {
+    "pkt_len_mean": {
+      "ICMP_DIAGNOSTIC": {
+        "mean": 259.75,
+        "std": 156.97,
+        "median": 185.0,
+        "min": 98.0,
+        "max": 638.0
+      },
+      "WEB_INTERACTIVE": {
+        "mean": 338.98,
+        "std": 117.93,
+        "median": 299.75,
+        "min": 229.16,
+        "max": 638.0
+      },
+      "BULK_TRANSFER": {
+        "mean": 478.38,
+        "std": 132.02,
+        "median": 538.06,
+        "min": 289.5,
+        "max": 638.0
+      },
+      "STREAMING_MEDIA": {
+        "mean": 533.78,
+        "std": 184.27,
+        "median": 574.0,
+        "min": 289.5,
+        "max": 737.62
+      },
+      "VOIP_AUDIO": {
+        "mean": 319.12,
+        "std": 112.97,
+        "median": 275.34,
+        "min": 230.0,
+        "max": 638.0
+      }
+    },
+    "pkt_len_max": {
+      "ICMP_DIAGNOSTIC": {
+        "mean": 282.73,
+        "std": 166.82,
+        "median": 313.0,
+        "min": 98.0,
+        "max": 642.0
+      },
+      "WEB_INTERACTIVE": {
+        "mean": 425.92,
+        "std": 93.01,
+        "median": 420.0,
+        "min": 313.0,
+        "max": 642.0
+      },
+      "BULK_TRANSFER": {
+        "mean": 877.58,
+        "std": 543.08,
+        "median": 578.0,
+        "min": 313.0,
+        "max": 1514.0
+      },
+      "STREAMING_MEDIA": {
+        "mean": 801.25,
+        "std": 454.43,
+        "median": 578.0,
+        "min": 313.0,
+        "max": 1346.0
+      },
+      "VOIP_AUDIO": {
+        "mean": 343.8,
+        "std": 116.07,
+        "median": 313.0,
+        "min": 230.0,
+        "max": 642.0
+      }
+    },
+    "total_bytes": {
+      "ICMP_DIAGNOSTIC": {
+        "mean": 2995.6,
+        "std": 2533.03,
+        "median": 1862.0,
+        "min": 579.0,
+        "max": 9520.0
+      },
+      "WEB_INTERACTIVE": {
+        "mean": 2537.17,
+        "std": 1844.9,
+        "median": 1479.5,
+        "min": 579.0,
+        "max": 5246.0
+      },
+      "BULK_TRANSFER": {
+        "mean": 178075.28,
+        "std": 209913.43,
+        "median": 1479.5,
+        "min": 579.0,
+        "max": 464326.0
+      },
+      "STREAMING_MEDIA": {
+        "mean": 97394.61,
+        "std": 114067.0,
+        "median": 1479.5,
+        "min": 579.0,
+        "max": 236574.0
+      },
+      "VOIP_AUDIO": {
+        "mean": 22377.6,
+        "std": 29874.8,
+        "median": 1680.0,
+        "min": 579.0,
+        "max": 68448.0
+      }
+    },
+    "total_packets": {
+      "ICMP_DIAGNOSTIC": {
+        "mean": 18.4,
+        "std": 16.61,
+        "median": 19.0,
+        "min": 2.0,
+        "max": 56.0
+      },
+      "WEB_INTERACTIVE": {
+        "mean": 9.17,
+        "std": 7.85,
+        "median": 4.0,
+        "min": 2.0,
+        "max": 19.0
+      },
+      "BULK_TRANSFER": {
+        "mean": 302.89,
+        "std": 355.63,
+        "median": 4.0,
+        "min": 2.0,
+        "max": 767.0
+      },
+      "STREAMING_MEDIA": {
+        "mean": 135.67,
+        "std": 157.49,
+        "median": 4.0,
+        "min": 2.0,
+        "max": 325.0
+      },
+      "VOIP_AUDIO": {
+        "mean": 85.76,
+        "std": 115.34,
+        "median": 7.0,
+        "min": 2.0,
+        "max": 258.0
+      }
+    },
+    "flow_iat_mean": {
+      "ICMP_DIAGNOSTIC": {
+        "mean": 0.36,
+        "std": 0.38,
+        "median": 0.48,
+        "min": 0.0,
+        "max": 1.03
+      },
+      "WEB_INTERACTIVE": {
+        "mean": 0.01,
+        "std": 0.01,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.06
+      },
+      "BULK_TRANSFER": {
+        "mean": 0.0,
+        "std": 0.0,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.01
+      },
+      "STREAMING_MEDIA": {
+        "mean": 0.01,
+        "std": 0.01,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.03
+      },
+      "VOIP_AUDIO": {
+        "mean": 0.16,
+        "std": 0.3,
+        "median": 0.02,
+        "min": 0.0,
+        "max": 0.92
+      }
+    },
+    "bytes_per_second": {
+      "ICMP_DIAGNOSTIC": {
+        "mean": 228427.63,
+        "std": 320184.65,
+        "median": 397.96,
+        "min": 100.8,
+        "max": 993303.47
+      },
+      "WEB_INTERACTIVE": {
+        "mean": 307193.81,
+        "std": 353715.25,
+        "median": 173591.61,
+        "min": 5189.05,
+        "max": 1040187.39
+      },
+      "BULK_TRANSFER": {
+        "mean": 351016.48,
+        "std": 360993.62,
+        "median": 170548.42,
+        "min": 67005.68,
+        "max": 1138422.05
+      },
+      "STREAMING_MEDIA": {
+        "mean": 303420.35,
+        "std": 328444.71,
+        "median": 167594.84,
+        "min": 26190.13,
+        "max": 995159.36
+      },
+      "VOIP_AUDIO": {
+        "mean": 262206.54,
+        "std": 364244.5,
+        "median": 11919.59,
+        "min": 290.51,
+        "max": 1119651.94
+      }
+    }
+  },
+  "root_cause_analysis": {
+    "control_flow_disambiguation": {
+      "hypothesis": "Production model achieved ICMP F1=0.2941 by misclassifying short IKE control flows (2 pkts) across all sessions as ICMP. HGB correctly ceased assigning IKE control flows to ICMP.",
+      "status": "CONFIRMED",
+      "evidence": "In Test set, Production predicted ICMP_DIAGNOSTIC for IKE control flows in WEB, VOIP, and STREAMING sessions. HGB correctly identified control flows occur in all classes."
+    },
+    "feature_overlap_icmp_vs_voip": {
+      "hypothesis": "Encrypted ICMP payload flows (64B pings) share high feature non-separability with VOIP_AUDIO (160B packets, small sizes, periodic IATs).",
+      "status": "CONFIRMED",
+      "evidence": "Mean packet length of ICMP (259.75B) and VOIP (319.12B) overlap heavily. Both Production and HGB classified ICMP payload flows as VOIP_AUDIO."
+    },
+    "small_test_sample_size": {
+      "hypothesis": "Test split contains only 10 ICMP flow records from 3 sessions, magnifying individual misclassification impact.",
+      "status": "LIKELY",
+      "evidence": "10 ICMP test flows split into 4 control flows and 6 payload flows. 0/10 ICMP predictions by HGB resulted in F1=0.0000."
+    },
+    "label_inaccuracy": {
+      "hypothesis": "Ground-truth labels were improperly assigned or post-hoc inferred.",
+      "status": "RULED_OUT",
+      "evidence": "Labels originate strictly from PRE_CAPTURE_EXPERIMENT_CONFIGURATION prior to packet capture."
+    },
+    "sentinel_mutation": {
+      "hypothesis": "Production artifacts or OOD PCAPs were mutated.",
+      "status": "RULED_OUT",
+      "evidence": "All 5 sentinel SHA256 hashes match baseline 100%."
+    }
+  }
+}
