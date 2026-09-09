@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import {
   FlaskConical, Play, CheckCircle2, AlertTriangle, Info, Server,
-  Shield, Activity, History, ArrowRight, X, Sliders, RefreshCw, RotateCcw
+  Shield, Activity, History, ArrowRight, X, Sliders, RefreshCw, RotateCcw,
+  Check, Lock, Terminal, Cpu, ChevronRight, HelpCircle
 } from 'lucide-react';
 import {
   fetchTestbedOptions, fetchTestbedStatus, validateExperimentConfig,
   executeExperimentRun, fetchExperimentHistory, analyzeExperimentRecord
 } from '../api/client';
+import InvestigationModal from './InvestigationModal';
 
 export default function DemonstrationLab({ onAnalyzeResult }) {
   const [options, setOptions] = useState(null);
   const [testbedStatus, setTestbedStatus] = useState(null);
   const [history, setHistory] = useState([]);
   const [selectedPreset, setSelectedPreset] = useState('SECURE_ENTERPRISE');
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const defaultState = {
     name: 'Secure Enterprise VPN',
@@ -36,7 +39,7 @@ export default function DemonstrationLab({ onAnalyzeResult }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [executionResult, setExecutionResult] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
-  const [infoModal, setInfoModal] = useState(null);
+  const [infoModalKey, setInfoModalKey] = useState(null);
 
   useEffect(() => {
     async function loadData() {
@@ -61,6 +64,7 @@ export default function DemonstrationLab({ onAnalyzeResult }) {
       setValidation(null);
       setExecutionResult(null);
       setErrorMsg('');
+      setCurrentStep(0);
     }
   };
 
@@ -70,12 +74,16 @@ export default function DemonstrationLab({ onAnalyzeResult }) {
     setValidation(null);
     setExecutionResult(null);
     setErrorMsg('');
+    setCurrentStep(0);
   };
 
   const handleValidate = async () => {
     setErrorMsg('');
     const res = await validateExperimentConfig(config);
     setValidation(res);
+    if (res && res.valid && currentStep === 0) {
+      setCurrentStep(1);
+    }
     return res;
   };
 
@@ -117,7 +125,7 @@ export default function DemonstrationLab({ onAnalyzeResult }) {
     try {
       setExecuting(true);
       setErrorMsg('');
-      const analysisData = await analyzeExperimentRecord(expId || executionResult.experiment_id);
+      const analysisData = await analyzeExperimentRecord(expId || executionResult?.experiment_id);
       if (onAnalyzeResult) {
         onAnalyzeResult(analysisData);
       }
@@ -128,374 +136,605 @@ export default function DemonstrationLab({ onAnalyzeResult }) {
     }
   };
 
-  const openInfoModal = (key) => {
-    if (options && options.educational_kb && options.educational_kb[key]) {
-      setInfoModal(options.educational_kb[key]);
+  const educationalTopics = {
+    ike: {
+      title: 'WHAT IS IKE (INTERNET KEY EXCHANGE)?',
+      explanation: 'Internet Key Exchange (IKEv2) negotiates security parameters and establishes IPsec Security Associations (SAs).',
+      observable_facts: 'DEEPSTATE extracts IKE header SPIs, exchange types, encryption algorithms, integrity algorithms, and DH groups.',
+      limitations: 'IKE payloads after authentication are encrypted and cannot be inspected without private keys.'
+    },
+    esp: {
+      title: 'WHAT IS ESP (ENCAPSULATING SECURITY PAYLOAD)?',
+      explanation: 'Encapsulating Security Payload (ESP) protects IPsec packets by providing payload confidentiality and integrity.',
+      observable_facts: 'DEEPSTATE inspects outer ESP headers, Security Parameter Indexes (SPIs), and packet size distributions.',
+      limitations: 'Encrypted ESP inner IP headers and application payloads are strictly unobservable.'
+    },
+    dh: {
+      title: 'WHAT IS A DIFFIE-HELLMAN (DH) GROUP?',
+      explanation: 'Diffie-Hellman groups define the mathematical strength of the key exchange used to generate shared secret keys.',
+      observable_facts: 'DEEPSTATE checks DH group strength against NIST SP 800-77 and BSI security guidelines.',
+      limitations: 'DH groups 1, 2, and 5 are considered cryptographically weak and trigger security score deductions.'
+    },
+    mode: {
+      title: 'TUNNEL MODE VS TRANSPORT MODE',
+      explanation: 'Tunnel Mode encrypts the entire original IP packet and adds a new outer IP header. Transport Mode encrypts only the payload.',
+      observable_facts: 'DEEPSTATE infers IPsec mode based on packet size overhead and header layout statistics.',
+      limitations: 'Mode inference is probabilistic based on observed frame structure.'
     }
   };
 
-  const isLive = testbedStatus?.peer_a_status === 'running';
+  const isLive = testbedStatus?.peer_a_status === 'running' || testbedStatus?.mode === 'docker_live';
+
+  const trafficTypes = [
+    { id: 'ICMP', label: 'ICMP', desc: 'Ping ECHO pattern' },
+    { id: 'UDP', label: 'UDP', desc: 'Custom UDP flow' },
+    { id: 'TCP', label: 'TCP', desc: 'Stream TCP pattern' },
+    { id: 'WEB', label: 'WEB-LIKE', desc: 'HTTP/S web flow' },
+    { id: 'DNS', label: 'DNS-LIKE', desc: 'Query/Response' },
+    { id: 'VOIP', label: 'VOIP-LIKE', desc: 'RTP stream pattern' },
+    { id: 'FILE_TRANSFER', label: 'FILE-TRANSFER', desc: 'Bulk file flow' }
+  ];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Top Banner */}
-      <div style={{
-        backgroundColor: '#FFFFFF',
-        borderRadius: '10px',
-        border: '1px solid #D8D4C8',
-        padding: '24px',
-        boxShadow: '0 2px 8px rgba(30, 30, 20, 0.05)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '16px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+
+      {/* 3. PAGE HEADER */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+        <div>
           <div style={{
-            width: '44px', height: '44px', borderRadius: '10px',
-            backgroundColor: '#F4E7B8', border: '1px solid #D6A928',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9A7618'
+            fontSize: '12px',
+            fontWeight: '650',
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+            color: '#8A877E',
+            marginBottom: '6px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
           }}>
-            <FlaskConical style={{ width: '22px', height: '22px' }} />
+            <span>DEEPSTATE</span>
+            <ChevronRight style={{ width: '12px', height: '12px' }} />
+            <span style={{ color: '#9A7618' }}>DEMONSTRATION LAB</span>
           </div>
-          <div>
-            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '700', color: '#252525' }}>
-              DEEPSTATE Demonstration Lab 2.0
-            </h3>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#66645D' }}>
-              Operator-controlled IPsec experiment design and encrypted traffic analysis workstation.
-            </p>
-          </div>
+
+          <h1 style={{ margin: '0 0 6px', fontSize: '30px', fontWeight: '700', color: '#252525', letterSpacing: '-0.02em' }}>
+            DEEPSTATE Demonstration Lab 2.0
+          </h1>
+          <p style={{ margin: 0, fontSize: '14px', color: '#66645D', maxWidth: '850px', lineHeight: '1.4' }}>
+            Controlled IPsec experimentation, encrypted traffic generation, PCAP capture, and analysis handoff.
+          </p>
         </div>
 
-        {/* Environment Badge */}
+        {/* Environment Status Badge */}
         <div style={{
           height: '32px',
-          padding: '0 12px',
-          borderRadius: '16px',
+          padding: '0 14px',
+          borderRadius: '999px',
           backgroundColor: isLive ? '#E3EEE7' : '#F5EBD5',
           color: isLive ? '#3F7654' : '#B57B22',
-          border: `1px solid ${isLive ? '#BFD7C7' : '#E3D08C'}`,
+          border: `1px solid ${isLive ? '#C5DEC9' : '#E6D3A7'}`,
           display: 'flex',
           alignItems: 'center',
-          gap: '6px',
+          gap: '8px',
           fontSize: '12px',
-          fontWeight: '600'
+          fontWeight: '700'
         }}>
-          <Server style={{ width: '14px', height: '14px' }} />
-          <span>Environment: {isLive ? 'STRONGSWAN LIVE' : 'SYNTHETIC FALLBACK'}</span>
+          <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: isLive ? '#3F7654' : '#B57B22' }} />
+          <span>ENVIRONMENT: {testbedStatus?.mode === 'docker_live' ? 'STRONGSWAN TESTBED READY' : 'SYNTHETIC EXPERIMENT ENGINE READY'}</span>
         </div>
       </div>
 
-      {/* Presets Toolbar */}
+      {/* 4. EXPERIMENT WORKFLOW INDICATOR */}
       <div style={{
-        backgroundColor: '#FFFFFF', borderRadius: '10px', border: '1px solid #D8D4C8', padding: '16px 20px',
-        boxShadow: '0 2px 8px rgba(30, 30, 20, 0.05)', display: 'flex', flexDirection: 'column', gap: '10px'
+        display: 'grid',
+        gridTemplateColumns: 'repeat(5, 1fr)',
+        gap: '8px',
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #D8D4C8',
+        borderRadius: '10px',
+        padding: '12px 16px',
+        boxShadow: '0 2px 8px rgba(37,37,37,0.04)'
       }}>
-        <div style={{ fontSize: '11px', fontWeight: '700', color: '#8A877E', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-          Demonstration Starting Presets (Click to Populate Controls)
+        {[
+          { step: 1, label: '01 CONFIGURE' },
+          { step: 2, label: '02 VALIDATE' },
+          { step: 3, label: '03 EXECUTE' },
+          { step: 4, label: '04 CAPTURE' },
+          { step: 5, label: '05 ANALYZE' }
+        ].map((item) => {
+          const isCompleted = currentStep > item.step || (item.step === 4 && executionResult);
+          const isActive = currentStep === item.step || (item.step === 1 && currentStep === 0);
+
+          let bg = '#EDEAE1';
+          let color = '#8A877E';
+          let border = '1px solid transparent';
+
+          if (isCompleted) {
+            bg = '#E3EEE7';
+            color = '#245837';
+            border = '1px solid #C5DEC9';
+          } else if (isActive) {
+            bg = '#F4E7B8';
+            color = '#9A7618';
+            border = '1px solid #D6A928';
+          }
+
+          return (
+            <div key={item.step} style={{
+              height: '44px',
+              borderRadius: '7px',
+              backgroundColor: bg,
+              color: color,
+              border: border,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '12px',
+              fontWeight: '700',
+              letterSpacing: '0.04em',
+              transition: 'all 0.2s ease'
+            }}>
+              <span>{isCompleted ? `✓ ${item.label}` : item.label}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 5. PRESET SYSTEM */}
+      <div style={{
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #D8D4C8',
+        borderRadius: '10px',
+        padding: '20px',
+        boxShadow: '0 2px 8px rgba(37,37,37,0.04)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '14px'
+      }}>
+        <div>
+          <h3 style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: '700', color: '#252525' }}>
+            EXPERIMENT PRESETS
+          </h3>
+          <p style={{ margin: 0, fontSize: '13px', color: '#66645D' }}>
+            Select a starting configuration or create a custom experiment profile.
+          </p>
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+
+        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
           {[
-            { id: 'SECURE_ENTERPRISE', label: 'Secure Enterprise', icon: Shield },
-            { id: 'LEGACY_VPN', label: 'Legacy VPN (CBC)', icon: Cpu },
-            { id: 'TRANSPORT_MODE', label: 'Transport Mode', icon: Activity },
-            { id: 'HIGH_VOLUME_UDP', label: 'High-Volume UDP', icon: Activity },
-            { id: 'VOIP_LIKE', label: 'VoIP-like (UDP/5060)', icon: Activity },
-            { id: 'WEB_LIKE', label: 'Web-like (TCP/443)', icon: Activity },
-            { id: 'CUSTOM_EXPERIMENT', label: 'Custom Operator', icon: Sliders }
-          ].map(p => {
-            const Icon = p.icon;
-            const active = selectedPreset === p.id;
+            { id: 'SECURE_ENTERPRISE', label: 'SECURE ENTERPRISE' },
+            { id: 'WEAK_LEGACY', label: 'LEGACY VPN (WEAK)' },
+            { id: 'AES_GCM_FAST', label: 'AES-GCM' },
+            { id: 'NULL_ENCRYPTION', label: 'NULL AUTH / ENC' },
+            { id: 'CUSTOM_OPERATOR', label: 'CUSTOM OPERATOR' }
+          ].map(preset => {
+            const isActive = selectedPreset === preset.id;
             return (
               <button
-                key={p.id}
+                key={preset.id}
                 type="button"
-                onClick={() => handleSelectPreset(p.id)}
+                onClick={() => handleSelectPreset(preset.id)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: '6px',
-                  height: '38px', padding: '0 14px', borderRadius: '7px', fontSize: '13px', fontWeight: '600',
-                  cursor: 'pointer', border: active ? '1px solid #D6A928' : '1px solid #D8D4C8',
-                  backgroundColor: active ? '#F4E7B8' : '#EDEAE1',
-                  color: active ? '#252525' : '#66645D', transition: 'all 0.15s ease'
+                  height: '42px',
+                  padding: '0 16px',
+                  borderRadius: '7px',
+                  fontSize: '12px',
+                  fontWeight: isActive ? '700' : '600',
+                  cursor: 'pointer',
+                  border: isActive ? '1px solid #D6A928' : '1px solid #D8D4C8',
+                  backgroundColor: isActive ? '#F4E7B8' : '#FFFFFF',
+                  color: isActive ? '#9A7618' : '#252525',
+                  whiteSpace: 'nowrap',
+                  transition: 'all 0.15s ease'
                 }}
+                onMouseOver={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = '#EDEAE1'; }}
+                onMouseOut={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = '#FFFFFF'; }}
               >
-                <Icon style={{ width: '14px', height: '14px', color: active ? '#9A7618' : '#8A877E' }} />
-                <span>{p.label}</span>
+                {preset.label}
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Main Experiment Setup Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '20px' }}>
+      {/* 6. MAIN CONFIGURATION GRID (50% / 50% Desktop) */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+        gap: '20px'
+      }}>
 
-        {/* Column 1: IPsec & Peer Setup */}
+        {/* 7. LEFT CARD — IPsec PEER CONFIGURATION */}
         <div style={{
-          backgroundColor: '#FFFFFF', borderRadius: '10px', border: '1px solid #D8D4C8', padding: '22px',
-          boxShadow: '0 2px 8px rgba(30, 30, 20, 0.05)', display: 'flex', flexDirection: 'column', gap: '16px'
+          backgroundColor: '#FFFFFF',
+          border: '1px solid #D8D4C8',
+          borderRadius: '10px',
+          padding: '20px',
+          boxShadow: '0 2px 8px rgba(37,37,37,0.04)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '18px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #E3DFD4', paddingBottom: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Shield style={{ width: '18px', height: '18px', color: '#D6A928' }} />
-              <h4 style={{ margin: 0, fontSize: '16px', fontWeight: '700', color: '#252525' }}>
-                1. IPsec & Peer Configuration
-              </h4>
-            </div>
-            <span style={{ fontSize: '11px', fontWeight: '600', color: '#8A877E' }}>StrongSwan Engine</span>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #EDEAE1', paddingBottom: '12px' }}>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: '700', color: '#252525' }}>
+              01 IPsec PEER CONFIGURATION
+            </h3>
+            <span style={{ fontSize: '11px', fontWeight: '600', color: '#8A877E', textTransform: 'uppercase' }}>
+              STRONGSWAN ENGINE
+            </span>
           </div>
 
-          {/* Compact Peer Cards */}
+          {/* Peer A & Peer B Cards */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-            <div style={{ backgroundColor: '#F4F1E8', padding: '12px', borderRadius: '8px', border: '1px solid #D8D4C8', height: '80px', boxSizing: 'border-box' }}>
-              <div style={{ fontSize: '11px', color: '#8A877E', fontWeight: '700', textTransform: 'uppercase' }}>PEER A (Initiator)</div>
-              <div style={{ fontSize: '15px', fontWeight: '700', color: '#252525', fontFamily: 'monospace' }}>192.168.100.2</div>
-              <div style={{ fontSize: '11px', color: '#66645D', fontFamily: 'monospace' }}>Subnet: 10.1.0.1/24</div>
+            <div style={{ backgroundColor: '#FFFDF8', border: '1px solid #EDEAE1', borderRadius: '8px', padding: '12px' }}>
+              <span style={{ fontSize: '10px', fontWeight: '700', color: '#9A7618', textTransform: 'uppercase' }}>PEER A (INITIATOR)</span>
+              <div style={{ fontSize: '13px', fontWeight: '700', color: '#252525', marginTop: '4px', fontFamily: 'monospace' }}>
+                192.168.1.10
+              </div>
+              <div style={{ fontSize: '11px', color: '#66645D', marginTop: '2px' }}>Subnet: 10.1.0.0/24</div>
             </div>
-            <div style={{ backgroundColor: '#F4F1E8', padding: '12px', borderRadius: '8px', border: '1px solid #D8D4C8', height: '80px', boxSizing: 'border-box' }}>
-              <div style={{ fontSize: '11px', color: '#8A877E', fontWeight: '700', textTransform: 'uppercase' }}>PEER B (Responder)</div>
-              <div style={{ fontSize: '15px', fontWeight: '700', color: '#252525', fontFamily: 'monospace' }}>192.168.100.3</div>
-              <div style={{ fontSize: '11px', color: '#66645D', fontFamily: 'monospace' }}>Subnet: 10.2.0.1/24</div>
+
+            <div style={{ backgroundColor: '#FFFDF8', border: '1px solid #EDEAE1', borderRadius: '8px', padding: '12px' }}>
+              <span style={{ fontSize: '10px', fontWeight: '700', color: '#596F7D', textTransform: 'uppercase' }}>PEER B (RESPONDER)</span>
+              <div style={{ fontSize: '13px', fontWeight: '700', color: '#252525', marginTop: '4px', fontFamily: 'monospace' }}>
+                192.168.1.20
+              </div>
+              <div style={{ fontSize: '11px', color: '#66645D', marginTop: '2px' }}>Subnet: 10.2.0.0/24</div>
             </div>
           </div>
 
-          {/* IKE Version */}
+          {/* 8. IKE Version */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '600', color: '#66645D' }}>IKE Version:</label>
-              <button type="button" onClick={() => openInfoModal('IKEv2')} style={{ background: 'none', border: 'none', color: '#9A7618', cursor: 'pointer' }}>
-                <Info style={{ width: '14px', height: '14px' }} />
+              <label style={{ fontSize: '12px', fontWeight: '600', color: '#66645D' }}>IKE VERSION</label>
+              <button onClick={() => setInfoModalKey('ike')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9A7618' }}>
+                <HelpCircle style={{ width: '14px', height: '14px' }} />
               </button>
             </div>
-            <div style={{ height: '40px', padding: '0 12px', borderRadius: '7px', backgroundColor: '#EDEAE1', border: '1px solid #D8D4C8', color: '#252525', fontSize: '13px', fontWeight: '600', display: 'flex', alignItems: 'center' }}>
-              IKEv2 (Internet Key Exchange v2)
-            </div>
+            <select
+              value={config.ike_version}
+              onChange={(e) => setConfig({ ...config, ike_version: e.target.value })}
+              disabled={executing}
+              style={{
+                width: '100%',
+                height: '40px',
+                padding: '0 12px',
+                borderRadius: '6px',
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #D8D4C8',
+                color: '#252525',
+                fontSize: '13px',
+                fontWeight: '600'
+              }}
+            >
+              <option value="IKEv2">IKEv2 (Recommended / Standard)</option>
+              <option value="IKEv1">IKEv1 (Legacy / Phase 1 Main Mode)</option>
+            </select>
           </div>
 
-          {/* Segmented Mode Control */}
+          {/* 9. IPsec Mode Segmented Control */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '600', color: '#66645D' }}>IPsec Mode:</label>
-              <button type="button" onClick={() => openInfoModal(config.mode === 'tunnel' ? 'Tunnel' : 'Transport')} style={{ background: 'none', border: 'none', color: '#9A7618', cursor: 'pointer' }}>
-                <Info style={{ width: '14px', height: '14px' }} />
+              <label style={{ fontSize: '12px', fontWeight: '600', color: '#66645D' }}>IPsec MODE</label>
+              <button onClick={() => setInfoModalKey('mode')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9A7618' }}>
+                <HelpCircle style={{ width: '14px', height: '14px' }} />
               </button>
             </div>
-            <div style={{ display: 'flex', backgroundColor: '#EDEAE1', padding: '3px', borderRadius: '8px', border: '1px solid #D8D4C8', height: '40px', boxSizing: 'border-box' }}>
+            <div style={{ display: 'flex', backgroundColor: '#EDEAE1', padding: '3px', borderRadius: '7px', gap: '4px' }}>
               {['tunnel', 'transport'].map(m => (
                 <button
                   key={m}
                   type="button"
                   onClick={() => setConfig({ ...config, mode: m })}
+                  disabled={executing}
                   style={{
-                    flex: 1, borderRadius: '6px', fontSize: '12px', fontWeight: '700', cursor: 'pointer', border: 'none',
+                    flex: 1,
+                    height: '36px',
+                    borderRadius: '5px',
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    border: 'none',
                     backgroundColor: config.mode === m ? '#D6A928' : 'transparent',
-                    color: config.mode === m ? '#252525' : '#66645D', transition: 'all 0.15s ease'
+                    color: config.mode === m ? '#252525' : '#66645D',
+                    transition: 'all 0.15s ease'
                   }}
                 >
-                  {m.toUpperCase()} Mode
+                  {m} MODE
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Encryption Algorithm */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '600', color: '#66645D' }}>Encryption Cipher:</label>
-              <button type="button" onClick={() => openInfoModal(config.encryption)} style={{ background: 'none', border: 'none', color: '#9A7618', cursor: 'pointer' }}>
-                <Info style={{ width: '14px', height: '14px' }} />
-              </button>
-            </div>
-            <select
-              value={config.encryption}
-              onChange={(e) => setConfig({ ...config, encryption: e.target.value })}
-              style={{
-                width: '100%', height: '40px', padding: '0 12px', borderRadius: '7px', backgroundColor: '#FFFFFF',
-                border: '1px solid #CFCABE', color: '#252525', fontSize: '13px', outline: 'none'
-              }}
-            >
-              <option value="AES-256-GCM">AES-256-GCM (AEAD Modern High-Security)</option>
-              <option value="AES-128-CBC">AES-128-CBC (Legacy Enterprise)</option>
-              <option value="AES-256-CBC">AES-256-CBC (Legacy Enterprise High-Bit)</option>
-            </select>
-          </div>
-
-          {/* Integrity & DH Group */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          {/* 10. Cryptographic Parameters */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#66645D', marginBottom: '6px' }}>Integrity:</label>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#66645D', marginBottom: '6px' }}>
+                ENCRYPTION ALGORITHM
+              </label>
               <select
-                value={config.integrity}
-                onChange={(e) => setConfig({ ...config, integrity: e.target.value })}
+                value={config.encryption}
+                onChange={(e) => setConfig({ ...config, encryption: e.target.value })}
+                disabled={executing}
                 style={{
-                  width: '100%', height: '40px', padding: '0 12px', borderRadius: '7px', backgroundColor: '#FFFFFF',
-                  border: '1px solid #CFCABE', color: '#252525', fontSize: '13px', outline: 'none'
+                  width: '100%',
+                  height: '40px',
+                  padding: '0 12px',
+                  borderRadius: '6px',
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid #D8D4C8',
+                  color: '#252525',
+                  fontSize: '13px'
                 }}
               >
-                <option value="NONE">AEAD Implicit (None)</option>
-                <option value="SHA256">HMAC-SHA-256</option>
-                <option value="SHA384">HMAC-SHA-384</option>
+                <option value="AES-256-GCM">AES-256-GCM (Secure AEAD)</option>
+                <option value="AES-128-CBC">AES-128-CBC (Standard CBC)</option>
+                <option value="3DES-CBC">3DES-CBC (Legacy / Weak)</option>
+                <option value="NULL">NULL (No Encryption / Test)</option>
               </select>
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#66645D', marginBottom: '6px' }}>DH Group:</label>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#66645D', marginBottom: '6px' }}>
+                INTEGRITY / AUTH ALGORITHM
+              </label>
+              <select
+                value={config.integrity}
+                onChange={(e) => setConfig({ ...config, integrity: e.target.value })}
+                disabled={executing}
+                style={{
+                  width: '100%',
+                  height: '40px',
+                  padding: '0 12px',
+                  borderRadius: '6px',
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid #D8D4C8',
+                  color: '#252525',
+                  fontSize: '13px'
+                }}
+              >
+                <option value="NONE">NONE (AEAD Combined Mode)</option>
+                <option value="HMAC-SHA2-256">HMAC-SHA2-256 (Recommended)</option>
+                <option value="HMAC-MD5-96">HMAC-MD5-96 (Insecure / Weak)</option>
+              </select>
+            </div>
+
+            {/* 11. DH Group */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <label style={{ fontSize: '12px', fontWeight: '600', color: '#66645D' }}>DIFFIE-HELLMAN (DH) GROUP</label>
+                <button onClick={() => setInfoModalKey('dh')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9A7618' }}>
+                  <HelpCircle style={{ width: '14px', height: '14px' }} />
+                </button>
+              </div>
               <select
                 value={config.dh_group}
                 onChange={(e) => setConfig({ ...config, dh_group: e.target.value })}
+                disabled={executing}
                 style={{
-                  width: '100%', height: '40px', padding: '0 12px', borderRadius: '7px', backgroundColor: '#FFFFFF',
-                  border: '1px solid #CFCABE', color: '#252525', fontSize: '13px', outline: 'none'
+                  width: '100%',
+                  height: '40px',
+                  padding: '0 12px',
+                  borderRadius: '6px',
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid #D8D4C8',
+                  color: '#252525',
+                  fontSize: '13px'
                 }}
               >
-                <option value="ECP256">Group 19 (ECP256)</option>
-                <option value="ECP384">Group 20 (ECP384)</option>
-                <option value="MODP2048">Group 14 (MODP2048)</option>
+                <option value="ECP256">Group 19 (ECP-256 / Secure)</option>
+                <option value="MODP2048">Group 14 (MODP-2048 / Standard)</option>
+                <option value="MODP1024">Group 2 (MODP-1024 / Weak)</option>
+                <option value="NONE">NONE (No Key Exchange / Insecure)</option>
               </select>
             </div>
           </div>
         </div>
 
-        {/* Column 2: Traffic Profile & Parameters */}
+        {/* 12. RIGHT CARD — TRAFFIC GENERATION */}
         <div style={{
-          backgroundColor: '#FFFFFF', borderRadius: '10px', border: '1px solid #D8D4C8', padding: '22px',
-          boxShadow: '0 2px 8px rgba(30, 30, 20, 0.05)', display: 'flex', flexDirection: 'column', gap: '16px'
+          backgroundColor: '#FFFFFF',
+          border: '1px solid #D8D4C8',
+          borderRadius: '10px',
+          padding: '20px',
+          boxShadow: '0 2px 8px rgba(37,37,37,0.04)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '18px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #E3DFD4', paddingBottom: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Activity style={{ width: '18px', height: '18px', color: '#D6A928' }} />
-              <h4 style={{ margin: 0, fontSize: '16px', fontWeight: '700', color: '#252525' }}>
-                2. Traffic Generation Parameters
-              </h4>
-            </div>
-            <span style={{ fontSize: '11px', fontWeight: '600', color: '#8A877E' }}>Pattern Simulator</span>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #EDEAE1', paddingBottom: '12px' }}>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: '700', color: '#252525' }}>
+              02 TRAFFIC GENERATION
+            </h3>
+            <span style={{ fontSize: '11px', fontWeight: '600', color: '#8A877E', textTransform: 'uppercase' }}>
+              L4/L7 PATTERN ENGINE
+            </span>
           </div>
 
-          {/* Traffic Type Selector */}
+          {/* 14. Selectable Traffic Scenario Cards */}
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '600', color: '#66645D' }}>Traffic Pattern Model:</label>
-              <button type="button" onClick={() => openInfoModal(config.traffic_type)} style={{ background: 'none', border: 'none', color: '#9A7618', cursor: 'pointer' }}>
-                <Info style={{ width: '14px', height: '14px' }} />
-              </button>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#66645D', marginBottom: '8px' }}>
+              SELECT TRAFFIC SCENARIO PATTERN
+            </label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '8px' }}>
+              {trafficTypes.map(t => {
+                const isSelected = config.traffic_type === t.id;
+                return (
+                  <div
+                    key={t.id}
+                    onClick={() => !executing && setConfig({ ...config, traffic_type: t.id })}
+                    style={{
+                      height: '60px',
+                      padding: '8px',
+                      borderRadius: '6px',
+                      border: isSelected ? '1px solid #D6A928' : '1px solid #D8D4C8',
+                      backgroundColor: isSelected ? '#F4E7B8' : '#FFFDF8',
+                      cursor: executing ? 'not-allowed' : 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <span style={{ fontSize: '12px', fontWeight: '700', color: isSelected ? '#9A7618' : '#252525' }}>
+                      {t.label}
+                    </span>
+                    <span style={{ fontSize: '10px', color: '#66645D', marginTop: '2px' }}>
+                      {t.desc}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
-            <select
-              value={config.traffic_type}
-              onChange={(e) => {
-                const val = e.target.value;
-                const p = val === 'VOIP-LIKE' ? 5060 : val === 'WEB' ? 443 : val === 'DNS-LIKE' ? 53 : 5001;
-                setConfig({ ...config, traffic_type: val, destination_port: p });
-              }}
-              style={{
-                width: '100%', height: '40px', padding: '0 12px', borderRadius: '7px', backgroundColor: '#FFFFFF',
-                border: '1px solid #CFCABE', color: '#252525', fontSize: '13px', outline: 'none'
-              }}
-            >
-              <option value="WEB">Web HTTPS/HTTP Simulation (TCP/443)</option>
-              <option value="VOIP-LIKE">VoIP / RTP Audio Simulation (UDP/5060)</option>
-              <option value="ICMP">ICMP Ping Echo Burst</option>
-              <option value="UDP">UDP Datagram Stream</option>
-              <option value="TCP">TCP Connection Stream</option>
-              <option value="DNS-LIKE">DNS Query Stream (UDP/53)</option>
-              <option value="FILE-TRANSFER-LIKE">Bulk File Transfer (TCP/443)</option>
-            </select>
           </div>
 
-          {/* Destination Port & Payload Size */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          {/* 13. Numeric Traffic Parameters */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#66645D', marginBottom: '6px' }}>Dest Port:</label>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#66645D', marginBottom: '4px' }}>
+                DESTINATION PORT
+              </label>
               <input
                 type="number"
                 value={config.destination_port}
-                onChange={(e) => setConfig({ ...config, destination_port: parseInt(e.target.value) || 5001 })}
+                onChange={(e) => setConfig({ ...config, destination_port: parseInt(e.target.value) || 80 })}
+                disabled={executing}
                 style={{
-                  width: '100%', height: '40px', padding: '0 12px', borderRadius: '7px', backgroundColor: '#FFFFFF',
-                  border: '1px solid #CFCABE', color: '#252525', fontSize: '13px', fontFamily: 'monospace'
+                  width: '100%', height: '40px', padding: '0 12px', borderRadius: '6px',
+                  border: '1px solid #D8D4C8', fontSize: '13px', fontFamily: 'monospace'
                 }}
               />
             </div>
+
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#66645D', marginBottom: '6px' }}>Payload Size (Bytes):</label>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#66645D', marginBottom: '4px' }}>
+                PACKET COUNT
+              </label>
+              <input
+                type="number"
+                value={config.packet_count}
+                onChange={(e) => setConfig({ ...config, packet_count: parseInt(e.target.value) || 10 })}
+                disabled={executing}
+                style={{
+                  width: '100%', height: '40px', padding: '0 12px', borderRadius: '6px',
+                  border: '1px solid #D8D4C8', fontSize: '13px', fontFamily: 'monospace'
+                }}
+              />
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#66645D', marginBottom: '4px' }}>
+                PAYLOAD SIZE (BYTES)
+              </label>
               <input
                 type="number"
                 value={config.payload_size}
-                onChange={(e) => setConfig({ ...config, payload_size: parseInt(e.target.value) || 512 })}
+                onChange={(e) => setConfig({ ...config, payload_size: parseInt(e.target.value) || 64 })}
+                disabled={executing}
                 style={{
-                  width: '100%', height: '40px', padding: '0 12px', borderRadius: '7px', backgroundColor: '#FFFFFF',
-                  border: '1px solid #CFCABE', color: '#252525', fontSize: '13px', fontFamily: 'monospace'
+                  width: '100%', height: '40px', padding: '0 12px', borderRadius: '6px',
+                  border: '1px solid #D8D4C8', fontSize: '13px', fontFamily: 'monospace'
+                }}
+              />
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#66645D', marginBottom: '4px' }}>
+                PACKET RATE (PKTS/SEC)
+              </label>
+              <input
+                type="number"
+                value={config.packet_rate}
+                onChange={(e) => setConfig({ ...config, packet_rate: parseInt(e.target.value) || 10 })}
+                disabled={executing}
+                style={{
+                  width: '100%', height: '40px', padding: '0 12px', borderRadius: '6px',
+                  border: '1px solid #D8D4C8', fontSize: '13px', fontFamily: 'monospace'
                 }}
               />
             </div>
           </div>
 
-          {/* Packet Count Slider */}
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#66645D', marginBottom: '4px' }}>
-              <span>Packet Count:</span>
-              <strong style={{ color: '#252525' }}>{config.packet_count} packets</strong>
-            </div>
-            <input
-              type="range"
-              min="5"
-              max="200"
-              step="5"
-              value={config.packet_count}
-              onChange={(e) => setConfig({ ...config, packet_count: parseInt(e.target.value) })}
-              style={{ width: '100%', accentColor: '#D6A928' }}
-            />
-          </div>
+          {/* 15. Collapsible Advanced Settings */}
+          <div style={{ borderTop: '1px solid #EDEAE1', paddingTop: '12px' }}>
+            <button
+              type="button"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                fontSize: '12px', fontWeight: '700', color: '#9A7618',
+                display: 'flex', alignItems: 'center', gap: '6px'
+              }}
+            >
+              <Sliders style={{ width: '14px', height: '14px' }} />
+              <span>{showAdvanced ? 'HIDE ADVANCED SETTINGS ▲' : 'SHOW ADVANCED OPERATOR SETTINGS ▼'}</span>
+            </button>
 
-          {/* Packet Rate Slider */}
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#66645D', marginBottom: '4px' }}>
-              <span>Packet Rate:</span>
-              <strong style={{ color: '#252525' }}>{config.packet_rate} pkts/sec</strong>
-            </div>
-            <input
-              type="range"
-              min="5"
-              max="100"
-              step="5"
-              value={config.packet_rate}
-              onChange={(e) => setConfig({ ...config, packet_rate: parseInt(e.target.value) })}
-              style={{ width: '100%', accentColor: '#D6A928' }}
-            />
+            {showAdvanced && (
+              <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: '#8A877E', marginBottom: '4px' }}>
+                    EXECUTION MODE
+                  </label>
+                  <select
+                    value={config.execution_mode}
+                    onChange={(e) => setConfig({ ...config, execution_mode: e.target.value })}
+                    disabled={executing}
+                    style={{ width: '100%', height: '36px', borderRadius: '6px', border: '1px solid #D8D4C8', fontSize: '12px' }}
+                  >
+                    <option value="auto">Automated Testbed Execution</option>
+                    <option value="manual">Manual Step Controls</option>
+                  </select>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Action Controls & Execution State */}
+      {/* 16. VALIDATION & ACTIONS PANEL */}
       <div style={{
-        backgroundColor: '#FFFFFF', borderRadius: '10px', border: '1px solid #D8D4C8', padding: '22px',
-        boxShadow: '0 2px 8px rgba(30, 30, 20, 0.05)', display: 'flex', flexDirection: 'column', gap: '16px'
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #D8D4C8',
+        borderRadius: '10px',
+        padding: '20px',
+        boxShadow: '0 2px 8px rgba(37,37,37,0.04)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <button
-              type="button"
-              onClick={handleRunExperiment}
-              disabled={executing}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '8px',
-                height: '44px', padding: '0 24px', borderRadius: '8px', fontSize: '14px', fontWeight: '700',
-                backgroundColor: executing ? '#77736A' : '#252525', border: 'none', color: '#FFFFFF', cursor: executing ? 'not-allowed' : 'pointer',
-                transition: 'background-color 0.15s'
-              }}
-            >
-              {executing ? <RefreshCw style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} /> : <Play style={{ width: '16px', height: '16px', color: '#D6A928' }} />}
-              <span>{executing ? 'Executing Pipeline...' : 'RUN EXPERIMENT'}</span>
-            </button>
+        {/* Validation Status Message Box */}
+        {validation && (
+          <div style={{
+            padding: '12px 16px',
+            borderRadius: '8px',
+            backgroundColor: validation.valid ? '#E3EEE7' : '#F3E2E0',
+            border: `1px solid ${validation.valid ? '#C5DEC9' : '#E2B9B5'}`,
+            color: validation.valid ? '#245837' : '#7D2822',
+            fontSize: '13px'
+          }}>
+            <strong>Validation Status:</strong> {validation.valid ? 'Experiment configuration valid and ready for execution.' : validation.errors?.join(', ')}
+          </div>
+        )}
 
+        {/* Action Buttons Row */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ display: 'flex', gap: '10px' }}>
             <button
               type="button"
               onClick={handleValidate}
               disabled={executing}
               style={{
-                height: '44px', padding: '0 18px', borderRadius: '8px', fontSize: '13px', fontWeight: '600',
-                backgroundColor: '#F4E7B8', border: '1px solid #D6A928', color: '#252525', cursor: 'pointer'
+                height: '42px',
+                padding: '0 18px',
+                borderRadius: '7px',
+                backgroundColor: '#F4E7B8',
+                border: '1px solid #D6A928',
+                color: '#9A7618',
+                fontWeight: '700',
+                fontSize: '13px',
+                cursor: executing ? 'not-allowed' : 'pointer'
               }}
             >
               VALIDATE CONFIGURATION
@@ -506,145 +745,250 @@ export default function DemonstrationLab({ onAnalyzeResult }) {
               onClick={handleReset}
               disabled={executing}
               style={{
-                display: 'flex', alignItems: 'center', gap: '6px',
-                height: '44px', padding: '0 16px', borderRadius: '8px', fontSize: '13px', fontWeight: '600',
-                backgroundColor: 'transparent', border: '1px solid #D8D4C8', color: '#66645D', cursor: 'pointer'
+                height: '42px',
+                padding: '0 16px',
+                borderRadius: '7px',
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #D8D4C8',
+                color: '#66645D',
+                fontWeight: '600',
+                fontSize: '13px',
+                cursor: executing ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
               }}
             >
               <RotateCcw style={{ width: '14px', height: '14px' }} />
-              <span>RESET</span>
+              <span>RESET EXPERIMENT</span>
             </button>
           </div>
 
-          {executionResult && (
-            <button
-              type="button"
-              onClick={() => handleAnalyzeHandoff(executionResult.experiment_id)}
-              disabled={executing}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '8px',
-                height: '44px', padding: '0 22px', borderRadius: '8px', fontSize: '14px', fontWeight: '700',
-                backgroundColor: '#3F7654', border: 'none', color: '#FFFFFF', cursor: 'pointer'
-              }}
-            >
-              <span>ANALYZE WITH DEEPSTATE</span>
-              <ArrowRight style={{ width: '16px', height: '16px' }} />
-            </button>
-          )}
+          {/* 17. Primary Action: RUN EXPERIMENT */}
+          <button
+            type="button"
+            onClick={handleRunExperiment}
+            disabled={executing}
+            style={{
+              height: '46px',
+              padding: '0 24px',
+              borderRadius: '7px',
+              backgroundColor: executing ? '#8A877E' : '#252525',
+              color: '#FFFFFF',
+              border: 'none',
+              fontWeight: '750',
+              fontSize: '13px',
+              letterSpacing: '0.04em',
+              cursor: executing ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 2px 8px rgba(37,37,37,0.08)'
+            }}
+          >
+            <Play style={{ width: '16px', height: '16px', color: '#D6A928' }} />
+            <span>{executing ? 'RUNNING EXPERIMENT...' : 'RUN EXPERIMENT'}</span>
+          </button>
         </div>
+      </div>
 
-        {/* Validation Result Alert */}
-        {validation && (
-          <div style={{
-            padding: '12px 16px', borderRadius: '8px', fontSize: '13px',
-            backgroundColor: validation.valid ? '#E3EEE7' : '#F3E2E0',
-            border: `1px solid ${validation.valid ? '#BFD7C7' : '#E8C4C1'}`,
-            color: validation.valid ? '#3F7654' : '#A94B43'
-          }}>
-            {validation.valid ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <CheckCircle2 style={{ width: '16px', height: '16px' }} />
-                <span>Configuration Validated! Ready for execution on StrongSwan testbed.</span>
-              </div>
-            ) : (
-              <div>
-                <strong>Validation Errors:</strong> {validation.errors.join(', ')}
-              </div>
-            )}
+      {/* 24. ERROR HANDLING PANEL */}
+      {errorMsg && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          padding: '16px',
+          backgroundColor: '#F3E2E0',
+          border: '1px solid #E2B9B5',
+          borderRadius: '10px',
+          color: '#7D2822'
+        }}>
+          <AlertTriangle style={{ width: '20px', height: '20px', flexShrink: 0, color: '#A94B43' }} />
+          <div>
+            <strong>EXPERIMENT FAILED:</strong> {errorMsg}
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Execution Error Alert */}
-        {errorMsg && (
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px', borderRadius: '8px',
-            backgroundColor: '#F3E2E0', border: '1px solid #E8C4C1', color: '#A94B43', fontSize: '13px'
-          }}>
-            <AlertTriangle style={{ width: '18px', height: '18px' }} />
-            <span>{errorMsg}</span>
-          </div>
-        )}
+      {/* 18. EXECUTION TIMELINE */}
+      {(executing || currentStep > 0) && (
+        <div style={{
+          backgroundColor: '#FFFFFF',
+          border: '1px solid #D8D4C8',
+          borderRadius: '10px',
+          padding: '20px',
+          boxShadow: '0 2px 8px rgba(37,37,37,0.04)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px'
+        }}>
+          <h4 style={{ margin: 0, fontSize: '15px', fontWeight: '700', color: '#252525' }}>
+            EXPERIMENT EXECUTION TIMELINE
+          </h4>
 
-        {/* Execution Timeline Step Progress */}
-        {executing && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 0', borderTop: '1px solid #E3DFD4' }}>
-            {['1. Validate', '2. Verify Peers', '3. Establish SA', '4. Capture & Traffic', '5. Finalize PCAP'].map((stepLabel, idx) => {
-              const stepNum = idx + 1;
-              const isDone = currentStep > stepNum;
-              const isCurrent = currentStep === stepNum;
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {[
+              { num: 1, name: 'Validation & Options Check' },
+              { num: 2, name: 'Peer SA Negotiation' },
+              { num: 3, name: 'Traffic Pattern Generation' },
+              { num: 4, name: 'PCAP Frame Capture' },
+              { num: 5, name: 'DEEPSTATE Analysis Handoff' }
+            ].map(stepItem => {
+              const isStepDone = currentStep > stepItem.num;
+              const isStepRunning = currentStep === stepItem.num && executing;
+
+              let bg = '#EDEAE1';
+              let text = '#8A877E';
+              let statusText = 'WAITING';
+
+              if (isStepDone) {
+                bg = '#E3EEE7';
+                text = '#3F7654';
+                statusText = 'COMPLETE';
+              } else if (isStepRunning) {
+                bg = '#F4E7B8';
+                text = '#9A7618';
+                statusText = 'RUNNING';
+              }
+
               return (
-                <div key={stepLabel} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px' }}>
-                  <div style={{
-                    width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    backgroundColor: isDone ? '#3F7654' : isCurrent ? '#D6A928' : '#EDEAE1', color: isDone || isCurrent ? '#FFFFFF' : '#66645D', fontWeight: '700', fontSize: '10px'
-                  }}>
-                    {isDone ? '✓' : stepNum}
+                <div key={stepItem.num} style={{
+                  height: '52px',
+                  padding: '0 16px',
+                  borderRadius: '8px',
+                  backgroundColor: bg,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  fontSize: '13px',
+                  fontWeight: '600'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: text }}>
+                    <span style={{ width: '24px', height: '24px', borderRadius: '50%', border: `1px solid ${text}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '700' }}>
+                      {stepItem.num}
+                    </span>
+                    <span>{stepItem.name}</span>
                   </div>
-                  <span style={{ color: isDone ? '#3F7654' : isCurrent ? '#9A7618' : '#8A877E', fontWeight: isCurrent ? '700' : '400' }}>
-                    {stepLabel}
+                  <span style={{ fontSize: '11px', fontWeight: '700', color: text }}>
+                    {statusText}
                   </span>
                 </div>
               );
             })}
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Execution Result Summary */}
-        {executionResult && (
-          <div style={{
-            backgroundColor: '#F4F1E8', borderRadius: '8px', border: '1px solid #D8D4C8', padding: '16px',
-            display: 'flex', flexDirection: 'column', gap: '10px'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#3F7654', fontWeight: '700', fontSize: '14px' }}>
-                <CheckCircle2 style={{ width: '18px', height: '18px' }} />
-                <span>Experiment Capture Finalized ({executionResult.execution_mode})</span>
+      {/* 19. CAPTURE RESULT & 20. ANALYSIS HANDOFF */}
+      {executionResult && (
+        <div style={{
+          backgroundColor: '#FFFDF8',
+          border: '1px solid #D6A928',
+          borderRadius: '10px',
+          padding: '24px',
+          boxShadow: '0 4px 12px rgba(214,169,40,0.08)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <CheckCircle2 style={{ width: '22px', height: '22px', color: '#3F7654' }} />
+              <div>
+                <h4 style={{ margin: 0, fontSize: '16px', fontWeight: '700', color: '#252525' }}>
+                  EXPERIMENT RUN EXECUTED & PCAP CAPTURED
+                </h4>
+                <div style={{ fontSize: '12px', color: '#66645D', marginTop: '2px' }}>
+                  Experiment ID: <code style={{ color: '#9A7618', fontWeight: '700' }}>{executionResult.experiment_id}</code> • Mode: <strong>{executionResult.execution_mode === 'live_container' ? 'StrongSwan Testbed' : 'Synthetic Engine'}</strong>
+                </div>
               </div>
-              <span style={{ fontSize: '12px', fontFamily: 'monospace', color: '#8A877E' }}>ID: {executionResult.experiment_id}</span>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', marginTop: '4px' }}>
-              <div>
-                <span style={{ display: 'block', fontSize: '11px', color: '#8A877E' }}>PCAP Path:</span>
-                <span style={{ fontSize: '12px', fontFamily: 'monospace', color: '#9A7618', fontWeight: '600' }}>{executionResult.file_path}</span>
-              </div>
-              <div>
-                <span style={{ display: 'block', fontSize: '11px', color: '#8A877E' }}>Packet Count:</span>
-                <span style={{ fontSize: '12px', fontWeight: '600', color: '#252525' }}>{executionResult.packet_count} pkts</span>
-              </div>
-              <div>
-                <span style={{ display: 'block', fontSize: '11px', color: '#8A877E' }}>Size Bytes:</span>
-                <span style={{ fontSize: '12px', fontWeight: '600', color: '#252525' }}>{executionResult.size_bytes} bytes</span>
-              </div>
-              <div>
-                <span style={{ display: 'block', fontSize: '11px', color: '#8A877E' }}>Duration:</span>
-                <span style={{ fontSize: '12px', fontWeight: '600', color: '#252525' }}>{executionResult.duration_seconds}s</span>
-              </div>
+            <button
+              type="button"
+              onClick={() => handleAnalyzeHandoff(executionResult.experiment_id)}
+              disabled={executing}
+              style={{
+                height: '42px',
+                padding: '0 22px',
+                borderRadius: '8px',
+                backgroundColor: '#D6A928',
+                color: '#252525',
+                fontWeight: '700',
+                fontSize: '13px',
+                border: 'none',
+                cursor: executing ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: '0 2px 8px rgba(37,37,37,0.06)',
+                transition: 'background-color 0.15s ease'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#BF941F'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#D6A928'}
+            >
+              <ArrowRight style={{ width: '16px', height: '16px', color: '#252525' }} />
+              <span>{executing ? 'ANALYZING HANDOFF...' : 'HAND OFF TO DEEPSTATE ANALYSIS WORKSPACE'}</span>
+            </button>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px', fontSize: '13px' }}>
+            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #EDEAE1', padding: '12px', borderRadius: '6px' }}>
+              <span style={{ fontSize: '11px', color: '#8A877E', fontWeight: '600', textTransform: 'uppercase' }}>CONFIGURED DH GROUP</span>
+              <div style={{ fontWeight: '700', color: '#252525', marginTop: '2px' }}>{config.dh_group}</div>
+            </div>
+            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #EDEAE1', padding: '12px', borderRadius: '6px' }}>
+              <span style={{ fontSize: '11px', color: '#8A877E', fontWeight: '600', textTransform: 'uppercase' }}>ENCRYPTION / AUTH</span>
+              <div style={{ fontWeight: '700', color: '#252525', marginTop: '2px' }}>{config.encryption}</div>
+            </div>
+            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #EDEAE1', padding: '12px', borderRadius: '6px' }}>
+              <span style={{ fontSize: '11px', color: '#8A877E', fontWeight: '600', textTransform: 'uppercase' }}>TRAFFIC PROFILE</span>
+              <div style={{ fontWeight: '700', color: '#9A7618', marginTop: '2px' }}>{config.traffic_type}</div>
+            </div>
+            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #EDEAE1', padding: '12px', borderRadius: '6px' }}>
+              <span style={{ fontSize: '11px', color: '#8A877E', fontWeight: '600', textTransform: 'uppercase' }}>PACKETS CAPTURED</span>
+              <div style={{ fontWeight: '700', color: '#252525', marginTop: '2px' }}>{executionResult.packet_count}</div>
+            </div>
+            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #EDEAE1', padding: '12px', borderRadius: '6px' }}>
+              <span style={{ fontSize: '11px', color: '#8A877E', fontWeight: '600', textTransform: 'uppercase' }}>FILE SIZE</span>
+              <div style={{ fontWeight: '700', color: '#252525', marginTop: '2px' }}>{executionResult.size_bytes || executionResult.file_size_bytes} B</div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Persistent Experiment History Log */}
+      {/* 21. PCAP LIBRARY INTEGRATION / RECENT EXPERIMENTS */}
       {history.length > 0 && (
         <div style={{
-          backgroundColor: '#FFFFFF', borderRadius: '10px', border: '1px solid #D8D4C8', padding: '20px',
-          boxShadow: '0 2px 8px rgba(30, 30, 20, 0.05)', display: 'flex', flexDirection: 'column', gap: '14px'
+          backgroundColor: '#FFFFFF',
+          border: '1px solid #D8D4C8',
+          borderRadius: '10px',
+          padding: '20px',
+          boxShadow: '0 2px 8px rgba(37,37,37,0.04)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '14px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #E3DFD4', paddingBottom: '10px' }}>
-            <History style={{ width: '18px', height: '18px', color: '#D6A928' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #EDEAE1', paddingBottom: '10px' }}>
+            <History style={{ width: '18px', height: '18px', color: '#9A7618' }} />
             <h4 style={{ margin: 0, fontSize: '16px', fontWeight: '700', color: '#252525' }}>
-              Experiment History Log ({history.length} Captured Runs)
+              RECENT EXPERIMENTS LOG ({history.length} Runs)
             </h4>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '280px', overflowY: 'auto' }}>
-            {history.map((exp) => (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {history.slice(0, 5).map(exp => (
               <div
                 key={exp.experiment_id}
                 style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '12px 16px', borderRadius: '8px', backgroundColor: '#F4F1E8', border: '1px solid #D8D4C8'
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  backgroundColor: '#FFFDF8',
+                  border: '1px solid #EDEAE1'
                 }}
               >
                 <div>
@@ -660,11 +1004,17 @@ export default function DemonstrationLab({ onAnalyzeResult }) {
                   type="button"
                   onClick={() => handleAnalyzeHandoff(exp.experiment_id)}
                   style={{
-                    padding: '6px 14px', borderRadius: '6px', fontSize: '12px', fontWeight: '600',
-                    backgroundColor: '#F4E7B8', border: '1px solid #D6A928', color: '#252525', cursor: 'pointer'
+                    padding: '6px 14px',
+                    borderRadius: '6px',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    backgroundColor: '#F4E7B8',
+                    border: '1px solid #D6A928',
+                    color: '#252525',
+                    cursor: 'pointer'
                   }}
                 >
-                  Analyze with DEEPSTATE
+                  ANALYZE WITH DEEPSTATE
                 </button>
               </div>
             ))}
@@ -672,56 +1022,36 @@ export default function DemonstrationLab({ onAnalyzeResult }) {
         </div>
       )}
 
-      {/* Centered Educational Info Overlay Modal */}
-      {infoModal && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(37,37,37,0.35)', zIndex: 1000,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px'
-        }}>
-          <div style={{
-            backgroundColor: '#FFFDF8', border: '1px solid #D8D4C8', borderRadius: '12px',
-            maxWidth: '720px', width: '100%', padding: '24px', boxShadow: '0 16px 50px rgba(30,30,20,0.18)',
-            display: 'flex', flexDirection: 'column', gap: '16px'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #E3DFD4', paddingBottom: '12px' }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '700', color: '#252525' }}>{infoModal.title}</h3>
-              <button
-                type="button"
-                onClick={() => setInfoModal(null)}
-                style={{
-                  width: '32px', height: '32px', borderRadius: '6px', backgroundColor: '#F0EDE5',
-                  border: 'none', color: '#66645D', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
-                }}
-              >
-                <X style={{ width: '18px', height: '18px' }} />
-              </button>
+      {/* 23. EDUCATIONAL INFORMATION MODAL */}
+      {infoModalKey && educationalTopics[infoModalKey] && (
+        <InvestigationModal
+          isOpen={true}
+          onClose={() => setInfoModalKey(null)}
+          title={educationalTopics[infoModalKey].title}
+          subtitle="Educational Reference & Technical Overview"
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '13px' }}>
+            <div>
+              <strong>What it does:</strong>
+              <p style={{ margin: '4px 0 0', color: '#66645D', lineHeight: '1.4' }}>
+                {educationalTopics[infoModalKey].explanation}
+              </p>
             </div>
-            {infoModal.rfc && <div style={{ fontSize: '12px', color: '#9A7618', fontWeight: '700' }}>{infoModal.rfc}</div>}
-            <div style={{ fontSize: '13px', color: '#252525', lineHeight: '1.5' }}>
-              <strong>What it does:</strong> {infoModal.explanation}
+
+            <div>
+              <strong>What DEEPSTATE Observes:</strong>
+              <p style={{ margin: '4px 0 0', color: '#66645D', lineHeight: '1.4' }}>
+                {educationalTopics[infoModalKey].observable_facts}
+              </p>
             </div>
-            <div style={{ fontSize: '13px', color: '#252525', lineHeight: '1.5' }}>
-              <strong>What DEEPSTATE Observes:</strong> {infoModal.observable_facts}
-            </div>
-            <div style={{ fontSize: '13px', color: '#A94B43', lineHeight: '1.5' }}>
-              <strong>Limitations:</strong> {infoModal.limitations}
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '12px', borderTop: '1px solid #E3DFD4' }}>
-              <button
-                type="button"
-                onClick={() => setInfoModal(null)}
-                style={{
-                  padding: '8px 20px', borderRadius: '6px',
-                  backgroundColor: '#252525', border: 'none', color: '#FFFFFF', cursor: 'pointer', fontSize: '13px', fontWeight: '600'
-                }}
-              >
-                Close Explanation
-              </button>
+
+            <div style={{ padding: '10px 12px', backgroundColor: '#F3E2E0', border: '1px solid #E2B9B5', borderRadius: '6px', color: '#7D2822' }}>
+              <strong>Limitations:</strong> {educationalTopics[infoModalKey].limitations}
             </div>
           </div>
-        </div>
+        </InvestigationModal>
       )}
+
     </div>
   );
 }

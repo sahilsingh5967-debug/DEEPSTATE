@@ -88,3 +88,12 @@ textarea:focus {
 .animate-fade-in {
   animation: fadeIn 0.2s ease-out forwards;
 }
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-modal-in {
+  animation: modalIn 0.18s ease-out forwards;
+}
